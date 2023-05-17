@@ -1,3 +1,10 @@
+import { FunFactCard } from "@/components/FunFactCard";
+import { PageLayout } from "@/components/PageLayout";
+
 export default function Home() {
-  return <main>Home page</main>;
+  return (
+    <PageLayout>
+      <FunFactCard />
+    </PageLayout>
+  );
 }
