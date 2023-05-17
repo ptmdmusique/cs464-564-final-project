@@ -1,0 +1,20 @@
+.page-content-container {
+  padding-top: 1rem;
+}
+
+@media (min-width: 768px) {
+  .page-content-container {
+    padding-top: 2rem;
+  }
+}
+
+.container-with-margin,
+.pokemon-stat-container {
+  margin-top: 2rem;
+}
+
+@media (min-width: 768px) {
+  .pokemon-stat-container {
+    margin-top: 0;
+  }
+}

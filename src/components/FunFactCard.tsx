@@ -14,12 +14,14 @@ export const FunFactCard = () => {
 
         <Card.Text>{funFactList[factIndex]}</Card.Text>
 
-        <Button
-          variant="outline-primary"
-          onClick={() => setFactIndex(getRandomIndex())}
-        >
-          Next Fact!
-        </Button>
+        <div className="text-center">
+          <Button
+            variant="outline-primary"
+            onClick={() => setFactIndex(getRandomIndex())}
+          >
+            Next Fact!
+          </Button>
+        </div>
       </Card.Body>
     </Card>
   );
