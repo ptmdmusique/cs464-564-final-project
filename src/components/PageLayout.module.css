@@ -1,0 +1,9 @@
+.page-layout {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.inner-container {
+  max-width: 1080px;
+}
