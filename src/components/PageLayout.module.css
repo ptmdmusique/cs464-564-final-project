@@ -3,15 +3,3 @@
   justify-content: center;
   align-items: center;
 }
-
-@media (min-width: 576px) .inner-container {
-  max-width: 540px;
-}
-
-@media (min-width: 768px) .inner-container {
-  max-width: 720px;
-}
-
-@media (min-width: 992px) .inner-container {
-  max-width: 960px;
-}

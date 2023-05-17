@@ -13,7 +13,7 @@ interface Props {
 export const PageLayout = ({ className, children }: Props) => {
   return (
     <main className={`${style["page-layout"]} ${className ?? ""}`}>
-      <Container className={style["inner-container"]}>{children}</Container>
+      <Container>{children}</Container>
     </main>
   );
 };
