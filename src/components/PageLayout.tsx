@@ -1,4 +1,8 @@
+"use client";
+
+import "bootstrap/dist/css/bootstrap.min.css";
 import { ReactNode } from "react";
+import { Container } from "react-bootstrap";
 import style from "./PageLayout.module.css";
 
 interface Props {
@@ -9,7 +13,7 @@ interface Props {
 export const PageLayout = ({ className, children }: Props) => {
   return (
     <main className={`${style["page-layout"]} ${className ?? ""}`}>
-      <div className={style["inner-container"]}>{children}</div>
+      <Container className={style["inner-container"]}>{children}</Container>
     </main>
   );
 };
