@@ -52,7 +52,12 @@ export const CompactBattleCard = () => {
 
         {/* // TODO redirect the user to the battle page with the 2 pokemon here */}
         <div className="text-center mt-4">
-          <Button variant="outline-primary">Battle!</Button>
+          <Button
+            variant="outline-primary"
+            disabled={pokemon1 === null || pokemon2 === null}
+          >
+            Battle!
+          </Button>
         </div>
       </Card.Body>
     </Card>

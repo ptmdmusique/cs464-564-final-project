@@ -26,7 +26,9 @@ export const CompactPokemonInfoCard = () => {
 
         {/* // TODO redirect the user to the battle page with the pokemon here */}
         <div className="text-center mt-4">
-          <Button variant="outline-primary">Find out more!</Button>
+          <Button variant="outline-primary" disabled={pokemon === null}>
+            Find out more!
+          </Button>
         </div>
       </Card.Body>
     </Card>
