@@ -22,7 +22,7 @@ export const CompactBattleCard = () => {
   }, []);
 
   return (
-    <Card>
+    <Card className="shadow-sm">
       <Card.Body>
         <Card.Title className="text-center">Battle Simulation!</Card.Title>
 

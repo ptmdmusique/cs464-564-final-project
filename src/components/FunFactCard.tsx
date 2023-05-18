@@ -9,7 +9,7 @@ export const FunFactCard = () => {
   const [factIndex, setFactIndex] = useState(getRandomIndex());
 
   return (
-    <Card>
+    <Card className="shadow-sm">
       <Card.Body>
         <Card.Title>Fun Fact!</Card.Title>
 

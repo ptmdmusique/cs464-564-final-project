@@ -18,7 +18,7 @@ export const CompactPokemonInfoCard = () => {
   }, []);
 
   return (
-    <Card>
+    <Card className="shadow-sm">
       <Card.Body>
         <Card.Title className="text-center">Pokemon Info</Card.Title>
 
