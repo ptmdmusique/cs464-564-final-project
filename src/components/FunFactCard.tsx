@@ -1,6 +1,7 @@
 "use client";
 
 import { funFactList } from "@/data/fun-fact";
+import { getRandomNumber } from "@/utils/functional";
 import { useState } from "react";
 import { Button, Card } from "react-bootstrap";
 
@@ -27,4 +28,4 @@ export const FunFactCard = () => {
   );
 };
 
-const getRandomIndex = () => Math.floor(Math.random() * funFactList.length);
+const getRandomIndex = () => getRandomNumber(0, funFactList.length - 1);
