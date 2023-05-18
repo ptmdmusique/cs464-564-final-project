@@ -1,10 +1,12 @@
 "use client";
 
-import { getRandomNumber } from "@/utils/functional";
+import { capitalizeFirstLetter } from "@/utils/functional";
+import { getRandomPokemon } from "@/utils/pokemon";
 import Image from "next/image";
-import { Pokemon, PokemonClient } from "pokenode-ts";
+import { Pokemon } from "pokenode-ts";
 import { useEffect, useState } from "react";
-import { Button, Card, Col, Container, Row, Spinner } from "react-bootstrap";
+import { Button, Card, Col, Row, Spinner } from "react-bootstrap";
+import { LoadingSpinner } from "./LoadingSpinner";
 
 export const CompactBattleCard = () => {
   const [pokemon1, setPokemon1] = useState<Pokemon | null>(null);
@@ -22,7 +24,7 @@ export const CompactBattleCard = () => {
   return (
     <Card>
       <Card.Body>
-        <Card.Title className="text-center">Battle simulation!</Card.Title>
+        <Card.Title className="text-center">Battle Simulation!</Card.Title>
 
         <div>
           <Row className="gx-0">
@@ -41,9 +43,8 @@ export const CompactBattleCard = () => {
                 <PokemonCard pokemon={pokemon2} />
               </>
             ) : (
-              <Col className="text-center mt-3">
-                <Spinner animation="border" role="status" />
-                <p>Loading ...</p>
+              <Col>
+                <LoadingSpinner />
               </Col>
             )}
           </Row>
@@ -60,27 +61,18 @@ export const CompactBattleCard = () => {
 
 const PokemonCard = ({ pokemon }: { pokemon: Pokemon }) => {
   const { sprites, name } = pokemon;
+  const capitalizedName = capitalizeFirstLetter(name);
 
   return (
     <Col xs={12} md={5} className="text-center">
       <Image
         src={sprites.front_default ?? ""}
-        alt={capitalizeFirstLetter(name)}
+        alt={capitalizedName}
         width={200}
         height={200}
       />
 
-      <p className="h6 mt-1">{capitalizeFirstLetter(name)}</p>
+      <p className="h6 mt-1">{capitalizedName}</p>
     </Col>
   );
 };
-
-const MIN_POKEMON_ID = 1;
-const MAX_POKEMON_ID = 1000;
-
-const api = new PokemonClient();
-const getRandomPokemon = () =>
-  api.getPokemonById(getRandomNumber(MIN_POKEMON_ID, MAX_POKEMON_ID));
-
-const capitalizeFirstLetter = (str: string) =>
-  str.charAt(0).toUpperCase() + str.slice(1);

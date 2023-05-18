@@ -1,10 +1,11 @@
 "use client";
 
+import { CompactBattleCard } from "@/components/CompactBattleCard";
+import { CompactPokemonInfoCard } from "@/components/CompactPokemonInfoCard";
 import { FunFactCard } from "@/components/FunFactCard";
 import { PageLayout } from "@/components/PageLayout";
 import { Col, Row } from "react-bootstrap";
 import style from "./page.module.css";
-import { CompactBattleCard } from "@/components/CompactBattleCard";
 
 export default function Home() {
   return (
@@ -21,7 +22,9 @@ export default function Home() {
         </Col>
 
         <Col className={style["pokemon-stat-container"]}>
-          <Row className="gx-0">Col 2</Row>
+          <Row className="gx-0">
+            <CompactPokemonInfoCard />
+          </Row>
         </Col>
       </Row>
     </PageLayout>
