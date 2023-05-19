@@ -4,12 +4,19 @@ import { CompactBattleCard } from "@/components/CompactBattleCard";
 import { CompactPokemonInfoCard } from "@/components/CompactPokemonInfoCard";
 import { FunFactCard } from "@/components/FunFactCard";
 import { PageLayout } from "@/components/PageLayout";
+import { PokeBall } from "@/components/PokeBall";
 import { Col, Row } from "react-bootstrap";
 import style from "./page.module.css";
 
 export default function Home() {
   return (
     <PageLayout>
+      <h1 className="mt-4 text-center">
+        <PokeBall className="me-2" />
+        Welcome to PokeStats
+        <PokeBall className="ms-2" />
+      </h1>
+
       <Row className={style["page-content-container"]}>
         <Col xs={12} md={6}>
           <Row className="gx-0">

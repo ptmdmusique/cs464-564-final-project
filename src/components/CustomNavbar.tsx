@@ -1,12 +1,12 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ComponentProps } from "react";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
+import { PokeBall } from "./PokeBall";
 
 export const CustomNavbar = () => {
   const pathName = usePathname();
@@ -15,13 +15,7 @@ export const CustomNavbar = () => {
     <Navbar bg="light" expand="lg">
       <Container>
         <Navbar.Brand as={Link} href="/">
-          <Image
-            alt="Pokeball logo"
-            src="/images/pokeball.png"
-            width="32"
-            height="32"
-            className="me-2"
-          />
+          <PokeBall className="me-2" />
           PokeStats
         </Navbar.Brand>
 
