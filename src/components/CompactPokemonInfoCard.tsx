@@ -7,6 +7,7 @@ import { Pokemon } from "pokenode-ts";
 import { useEffect, useState } from "react";
 import { Button, Card, ListGroup, Row } from "react-bootstrap";
 import { LoadingSpinner } from "./LoadingSpinner";
+import Link from "next/link";
 
 export const CompactPokemonInfoCard = () => {
   const [pokemon, setPokemon] = useState<Pokemon | null>(null);
@@ -24,12 +25,16 @@ export const CompactPokemonInfoCard = () => {
 
         {pokemon ? <PokemonInfoCard pokemon={pokemon} /> : <LoadingSpinner />}
 
-        {/* // TODO redirect the user to the battle page with the pokemon here */}
-        <div className="text-center mt-4">
-          <Button variant="outline-primary" disabled={pokemon === null}>
-            Find out more!
-          </Button>
-        </div>
+        {pokemon && (
+          <div className="text-center mt-4">
+            <Link
+              href={`/statistics?pokemon=${pokemon.id}`}
+              className="btn btn-outline-primary"
+            >
+              Find out more!
+            </Link>
+          </div>
+        )}
       </Card.Body>
     </Card>
   );

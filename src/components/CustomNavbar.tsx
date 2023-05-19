@@ -37,7 +37,7 @@ export const CustomNavbar = () => {
 type PossibleRoute = ComponentProps<typeof Link>["href"];
 const routeList = [
   { route: "/", displayName: "Home" },
-  { route: "/pokedex", displayName: "Pokedex" },
+  { route: "/pokedex", displayName: "Pokédex" },
   { route: "/simulator", displayName: "Battle Simulator" },
   { route: "/statistics", displayName: "Statistics" },
 ] satisfies { route: PossibleRoute; displayName: string }[];

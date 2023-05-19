@@ -3,9 +3,10 @@
 import { capitalizeFirstLetter } from "@/utils/functional";
 import { getRandomPokemon } from "@/utils/pokemon";
 import Image from "next/image";
+import Link from "next/link";
 import { Pokemon } from "pokenode-ts";
 import { useEffect, useState } from "react";
-import { Button, Card, Col, Row, Spinner } from "react-bootstrap";
+import { Button, Card, Col, Row } from "react-bootstrap";
 import { LoadingSpinner } from "./LoadingSpinner";
 
 export const CompactBattleCard = () => {
@@ -50,15 +51,16 @@ export const CompactBattleCard = () => {
           </Row>
         </div>
 
-        {/* // TODO redirect the user to the battle page with the 2 pokemon here */}
-        <div className="text-center mt-4">
-          <Button
-            variant="outline-primary"
-            disabled={pokemon1 === null || pokemon2 === null}
-          >
-            Battle!
-          </Button>
-        </div>
+        {pokemon1 && pokemon2 && (
+          <div className="text-center mt-4">
+            <Link
+              href={`/simulator?pokemon1=${pokemon1.id}&pokemon2=${pokemon2.id}`}
+              className="btn btn-outline-primary"
+            >
+              Battle!
+            </Link>
+          </div>
+        )}
       </Card.Body>
     </Card>
   );
