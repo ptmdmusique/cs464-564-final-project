@@ -6,7 +6,6 @@ import { FunFactCard } from "@/components/FunFactCard";
 import { PageLayout } from "@/components/PageLayout";
 import { PokeBall } from "@/components/PokeBall";
 import { Col, Row } from "react-bootstrap";
-import style from "./page.module.css";
 
 export default function Home() {
   return (
@@ -17,18 +16,18 @@ export default function Home() {
         <PokeBall className="ms-2" />
       </h1>
 
-      <Row className={style["page-content-container"]}>
+      <Row>
         <Col xs={12} md={6}>
           <Row className="gx-0">
             <FunFactCard />
           </Row>
 
-          <Row className={`${style["container-with-margin"]} gx-0`}>
+          <Row className="mt-3 gx-0">
             <CompactBattleCard />
           </Row>
         </Col>
 
-        <Col className={style["pokemon-stat-container"]}>
+        <Col className="mt-3 mt-md-0">
           <Row className="gx-0">
             <CompactPokemonInfoCard />
           </Row>

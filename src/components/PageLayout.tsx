@@ -3,7 +3,6 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import { ReactNode } from "react";
 import { Container } from "react-bootstrap";
-import style from "./PageLayout.module.css";
 
 interface Props {
   className?: string;
@@ -12,7 +11,11 @@ interface Props {
 
 export const PageLayout = ({ className, children }: Props) => {
   return (
-    <main className={`${style["page-layout"]} ${className ?? ""}`}>
+    <main
+      className={`d-flex align-items-center justify-content-center ${
+        className ?? ""
+      }`}
+    >
       <Container>{children}</Container>
     </main>
   );
