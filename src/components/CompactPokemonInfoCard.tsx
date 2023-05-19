@@ -28,7 +28,7 @@ export const CompactPokemonInfoCard = () => {
         {pokemon && (
           <div className="text-center mt-4">
             <Link
-              href={`/statistics?pokemon=${pokemon.id}`}
+              href={`/pokedex?pokemon=${pokemon.id}`}
               className="btn btn-outline-primary"
             >
               Find out more!
