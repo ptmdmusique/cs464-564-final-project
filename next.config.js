@@ -4,6 +4,9 @@ const nextConfig = {
     appDir: true,
     typedRoutes: true,
   },
+  images: {
+    domains: ["pokeapi.co", "raw.githubusercontent.com"],
+  },
 };
 
 module.exports = nextConfig;
