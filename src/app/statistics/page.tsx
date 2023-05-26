@@ -1,14 +1,17 @@
 'use client';
+import 'src/app/statistics/statistics.css';
+
 import { getPokemon } from '@/utils/pokemon';
-import { HeaviestChart } from '@/components/HeaviestChart';
-import { LightestChart } from '@/components/LightestChart';
+// import { HeaviestChart } from '@/components/HeaviestChart';
+import { BarChart } from '@/components/BarChart';
 import { useEffect, useState } from 'react';
 import { Pokemon } from 'pokenode-ts';
 import { StatsMenu } from '@/components/StatsMenu';
-import { Row, Col, Container } from 'react-bootstrap';
+import { Row, Col } from 'react-bootstrap';
+import { getHeaviest, getLightest, getTallest, getShortest } from '@/utils/functional';
 
 //TODO: change this to 1000 once done testing
-const MAX_POKEMON = 50;
+const MAX_POKEMON = 10;
 
 const StatisticsPage = () => {
   const [pokemonList, setPokemonList] = useState<Pokemon[]>([]);
@@ -16,8 +19,8 @@ const StatisticsPage = () => {
   const menuItems = [
     { title: 'Top 10 Heaviest', chartName: 'Heaviest' },
     { title: 'Top 10 Lightest', chartName: 'Lightest' },
-    { title: 'Chart 3', chartName: 'Chart 3' },
-    { title: 'Chart 4', chartName: 'Chart 4' },
+    { title: 'Top 10 Tallest', chartName: 'Tallest' },
+    { title: 'Top 10 Shortest', chartName: 'Shortest' },
   ];
 
   useEffect(() => {
@@ -27,36 +30,92 @@ const StatisticsPage = () => {
       });
     }
   }, []);
-
+  let data = getHeaviest(pokemonList);
   const handleClick = (stat: string) => {
     switch (stat) {
       case 'Heaviest': {
-        setChartComponent(<HeaviestChart pokemonList={pokemonList} />);
+        // setSortedPokemon(getHeaviest(pokemonList))
+        data = getHeaviest(pokemonList);
+        setChartComponent(
+          <BarChart
+            id={data.id}
+            title={'Top 10 Heaviest Pokemon'}
+            label={'Weight'}
+            labels={data.labels}
+            sortedData={data.data}
+            units={'lb'}
+          />
+        );
         break;
       }
       case 'Lightest': {
-        setChartComponent(<LightestChart />);
+        data = getLightest(pokemonList);
+        setChartComponent(
+          <BarChart
+            id={data.id}
+            title={'Top 10 Lightest Pokemon'}
+            label={'Weight'}
+            labels={data.labels}
+            sortedData={data.data}
+            units={'lb'}
+          />
+        );
+        break;
+      }
+      case 'Tallest': {
+        data = getTallest(pokemonList);
+        setChartComponent(
+          <BarChart
+            id={data.id}
+            title={'Top 10 Tallest Pokemon'}
+            label={'Height'}
+            labels={data.labels}
+            sortedData={data.data}
+            units={'ft'}
+          />
+        );
+        break;
+      }
+      case 'Shortest': {
+        data = getShortest(pokemonList);
+        setChartComponent(
+          <BarChart
+            id={data.id}
+            title={'Top 10 Shortest Pokemon'}
+            label={'Height'}
+            labels={data.labels}
+            sortedData={data.data}
+            units={'ft'}
+          />
+        );
         break;
       }
     }
   };
 
   return (
-    <Row>
-      <Col>
-        <StatsMenu handleClick={handleClick} menuItems={menuItems} />
-      </Col>
-      <Col xs={9}>
-        <main className="w-75 ps-5">
+    <main>
+      <Row>
+        <Col xs={12} md={3}>
+          <StatsMenu handleClick={handleClick} menuItems={menuItems} />
+        </Col>
+        <Col xs={12} md={9} className="ps-5">
           <h1 className="text-center">Statistics Page</h1>
           {chartComponent !== undefined ? (
             chartComponent
           ) : (
-            <HeaviestChart pokemonList={pokemonList} />
+            <BarChart
+              id={data.id}
+              title={'Top 10 Heaviest Pokemon'}
+              label={'Weight'}
+              labels={data.labels}
+              sortedData={data.data}
+              units={'lb'}
+            />
           )}
-        </main>
-      </Col>
-    </Row>
+        </Col>
+      </Row>
+    </main>
   );
 };
 
