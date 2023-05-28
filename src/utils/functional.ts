@@ -1,10 +1,45 @@
 import { Pokemon, PokemonShape } from 'pokenode-ts';
+import { json } from 'stream/consumers';
 
 export const getRandomNumber = (min: number, max: number) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
 export const capitalizeFirstLetter = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
+
+//Sort pokemon by id
+export const sortById = (pokemonList: Pokemon[]) => {
+  return pokemonList.sort((a, b) => (a.id < b.id ? -1 : 1));
+};
+
+//Filter PokemonList array by regions
+export const getKanto = (pokemonList: Pokemon[]) => {
+  return pokemonList.slice(0, 150);
+};
+export const getJohto = (pokemonList: Pokemon[]) => {
+  return pokemonList.slice(151, 250);
+};
+export const getHoenn = (pokemonList: Pokemon[]) => {
+  return pokemonList.slice(251, 385);
+};
+export const getSinnoh = (pokemonList: Pokemon[]) => {
+  return pokemonList.slice(386, 492);
+};
+export const getUnova = (pokemonList: Pokemon[]) => {
+  return pokemonList.slice(493, 648);
+};
+export const getKalos = (pokemonList: Pokemon[]) => {
+  return pokemonList.slice(649, 720);
+};
+export const getAlola = (pokemonList: Pokemon[]) => {
+  return pokemonList.slice(721, 808);
+};
+export const getGalar = (pokemonList: Pokemon[]) => {
+  return pokemonList.slice(809, 904);
+};
+export const getPaldea = (pokemonList: Pokemon[]) => {
+  return pokemonList.slice(905, 1009);
+};
 
 // Weight Charts
 export const getHeaviest = (pokemonList: Pokemon[]) => {

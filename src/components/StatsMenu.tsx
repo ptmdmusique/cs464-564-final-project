@@ -15,7 +15,6 @@ const menuItems = [
 ];
 
 interface StatsMenuProps {
-  // menuItems: { title: string; chartName: string }[];
   handleClick: (stat: string) => void;
 }
 export const StatsMenu = ({ handleClick }: StatsMenuProps) => {

@@ -1,21 +1,9 @@
 import React from 'react';
-import { Form, Row, Col } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
 import 'src/app/statistics/statistics.css';
 
-// const regions = {
-//   kanto: 151,
-//   johto: 251,
-//   hoenn: 386,
-//   sinnoh: 493,
-//   unova: 649,
-//   kalos: 721,
-//   alola: 809,
-//   galar: 905,
-//   paldea: 1010,
-// };
-
 interface ToggleMenuProps {
-  handleSwitch: (id: string) => void;
+  handleSwitch: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export const ToggleMenu = ({ handleSwitch }: ToggleMenuProps) => {
@@ -44,7 +32,7 @@ export const ToggleMenu = ({ handleSwitch }: ToggleMenuProps) => {
               id={region}
               key={region}
               className="me-2 pt-1"
-              onChange={() => handleSwitch(region)}
+              onChange={(event) => handleSwitch(event)}
             />
           ))}
         </div>
