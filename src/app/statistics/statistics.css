@@ -5,3 +5,12 @@ canvas {
   position: relative;
   height: 60vh;
 }
+.regions-container {
+  max-width: 400px;
+  min-width: 340px;
+}
+.regions {
+  display: flex;
+  flex-flow: column wrap;
+  max-height: 100px;
+}

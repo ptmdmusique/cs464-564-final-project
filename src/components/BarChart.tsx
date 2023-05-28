@@ -13,21 +13,19 @@ import {
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 interface BarChartProps {
-  id: number[];
   title: string;
   label: string;
-  labels: string[];
-  sortedData: number[];
+  dataset: { id: number[]; labels: string[]; data: number[] };
   units: string;
 }
 
-export const BarChart = ({ id, title, label, labels, sortedData, units }: BarChartProps) => {
+export const BarChart = ({ dataset, title, label, units }: BarChartProps) => {
   const data = {
-    labels: labels,
+    labels: dataset.labels,
     datasets: [
       {
         label: label,
-        data: sortedData,
+        data: dataset.data,
         backgroundColor: 'rgb(255, 99, 132)',
         stack: 'Stack 0',
         hoverBackgroundColor: 'rgb(155, 99, 132)',
@@ -39,7 +37,9 @@ export const BarChart = ({ id, title, label, labels, sortedData, units }: BarCha
     maintainAspectRatio: false,
     onClick: (event: any, element: any, chart: any) => {
       if (element.length > 0) {
-        window.location.href = `http://localhost:3000//pokedex?pokemon=${id[element[0].index]}`;
+        window.location.href = `http://localhost:3000//pokedex?pokemon=${
+          dataset.id[element[0].index]
+        }`;
       }
     },
     scales: {
