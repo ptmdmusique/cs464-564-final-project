@@ -61,8 +61,15 @@ export default function PokemonBattleView() {
   }, [pokemonIdList, setQueryParams, queryParams]);
 
   useEffect(() => {
-    const newId1 = parseInt(queryParams?.pokemon1 ?? "");
-    const newId2 = parseInt(queryParams?.pokemon2 ?? "");
+    const queryId1 = queryParams?.pokemon1;
+    const queryId2 = queryParams?.pokemon2;
+
+    if (!queryId1 || !queryId2) {
+      return;
+    }
+
+    const newId1 = parseInt(queryId1 ?? "");
+    const newId2 = parseInt(queryId2 ?? "");
 
     const id1Changed = battlePokemonList?.pokemon1.id !== newId1;
     const id2Changed = battlePokemonList?.pokemon2.id !== newId2;
