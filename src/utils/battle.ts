@@ -1,4 +1,4 @@
-import { BattleResult, TurnHistory } from "@/data/battle";
+import { BattleResult, TurnHistory, isDamageMove } from "@/data/battle";
 import { Move, Pokemon } from "pokenode-ts";
 import { getRandomArrayElement } from "./functional";
 import { getMoveByName } from "./pokemon";
@@ -136,14 +136,19 @@ const getPokemonSortedRankedMoves = (
     .filter(({ move }) => !!moveInfoLookup[move.name])
     .map<{ move: Move; damageDeal: number }>(({ move: moveInfo }) => {
       const move = moveInfoLookup[moveInfo.name];
-      return { move, damageDeal: getMoveDamage(move, otherPokemon) };
+      return { move, damageDeal: getMoveDamage(move, pokemon, otherPokemon) };
     })
     .sort((a, b) => b.damageDeal - a.damageDeal);
 
   return rankedMoveList;
 };
 
-const getMoveDamage = (move: Move, otherPokemon: Pokemon) => {
+const getMoveDamage = (move: Move, pokemon: Pokemon, otherPokemon: Pokemon) => {
+  if (!isDamageMove(move)) {
+    // Currently we don't care for this
+    return 0;
+  }
+
   const moveElement = move.type.name as PokemonType;
   const otherPokemonElementList = otherPokemon.types.map((t) => t.type.name);
 
@@ -173,9 +178,14 @@ const getMoveDamage = (move: Move, otherPokemon: Pokemon) => {
     }
   }
 
+  const isSpecialMove = move.damage_class.name === "special";
+  const pokemonBaseAttack = getAtk(pokemon, isSpecialMove);
+  const otherBaseDefense = getDef(otherPokemon, isSpecialMove);
+
   const movePower = move.power ?? 0;
   const damageDeal =
-    Math.max(movePower - getDef(otherPokemon), 1) * moveEffectivenessMultiplier;
+    Math.max(movePower + pokemonBaseAttack - otherBaseDefense, 1) *
+    moveEffectivenessMultiplier;
 
   return damageDeal;
 };
@@ -183,8 +193,13 @@ const getMoveDamage = (move: Move, otherPokemon: Pokemon) => {
 const getHp = (pokemon: Pokemon) =>
   pokemon.stats.find((s) => s.stat.name === "hp")?.base_stat ?? 0;
 
-const getDef = (pokemon: Pokemon) =>
-  pokemon.stats.find((s) => s.stat.name === "defense")?.base_stat ?? 0;
+const getDef = (pokemon: Pokemon, special: boolean) =>
+  pokemon.stats.find((s) => (special ? "special-defense" : "defense"))
+    ?.base_stat ?? 0;
+
+const getAtk = (pokemon: Pokemon, special: boolean) =>
+  pokemon.stats.find((s) => (special ? "special-attack" : "attack"))
+    ?.base_stat ?? 0;
 
 const getNextIndex = (currentIndex: number) =>
   ((currentIndex + 1) % 2) as 0 | 1;
