@@ -3,6 +3,7 @@ import { Move, Pokemon } from "pokenode-ts";
 export interface TurnHistory {
   turnPokemonIndex: 0 | 1;
   move: Move;
+  damageDeal: number;
   resultPokemon1: Pokemon;
   resultPokemon2: Pokemon;
 }

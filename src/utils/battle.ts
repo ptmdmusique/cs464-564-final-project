@@ -109,6 +109,7 @@ export const battle = async (
     history.push({
       turnPokemonIndex,
       move,
+      damageDeal,
       resultPokemon1: turnPokemonIndex === 0 ? mainPokemon : otherPokemon,
       resultPokemon2: turnPokemonIndex === 1 ? mainPokemon : otherPokemon,
     });
@@ -146,7 +147,7 @@ const getMoveDamage = (move: Move, otherPokemon: Pokemon) => {
   const moveElement = move.type.name as PokemonType;
   const otherPokemonElementList = otherPokemon.types.map((t) => t.type.name);
 
-  let moveEffectiveNessMultiplier = 1;
+  let moveEffectivenessMultiplier = 1;
   for (const otherPokemonElement of otherPokemonElementList) {
     const otherTypeInfo = pokemonTypeInfoList.find(
       (typeInfo) => typeInfo.name === otherPokemonElement,
@@ -161,22 +162,20 @@ const getMoveDamage = (move: Move, otherPokemon: Pokemon) => {
 
     // In priority order
     if (immunes.includes(moveElement)) {
-      moveEffectiveNessMultiplier = 0;
+      moveEffectivenessMultiplier = 0;
       break;
     } else if (weaknesses.includes(moveElement)) {
-      moveEffectiveNessMultiplier *= 2;
+      moveEffectivenessMultiplier *= 2;
       break;
     } else if (strengths.includes(moveElement)) {
-      moveEffectiveNessMultiplier *= 0.5;
+      moveEffectivenessMultiplier *= 0.5;
       break;
     }
   }
 
   const movePower = move.power ?? 0;
-  const damageDeal = Math.min(
-    (movePower - getDef(otherPokemon)) * moveEffectiveNessMultiplier,
-    1,
-  );
+  const damageDeal =
+    Math.max(movePower - getDef(otherPokemon), 1) * moveEffectivenessMultiplier;
 
   return damageDeal;
 };
