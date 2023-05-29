@@ -1,5 +1,30 @@
+export type PokemonType =
+  | "normal"
+  | "fire"
+  | "water"
+  | "electric"
+  | "grass"
+  | "ice"
+  | "fighting"
+  | "poison"
+  | "ground"
+  | "flying"
+  | "psychic"
+  | "bug"
+  | "rock"
+  | "ghost"
+  | "dragon"
+  | "dark"
+  | "steel"
+  | "fairy";
+
 // https://github.com/filipekiss/pokemon-type-chart/blob/master/types.json
-export const pokemonTypeList = [
+export const pokemonTypeInfoList: {
+  name: PokemonType;
+  immunes: PokemonType[];
+  strengths: PokemonType[];
+  weaknesses: PokemonType[];
+}[] = [
   {
     name: "normal",
     immunes: ["ghost"],
@@ -116,9 +141,7 @@ export const pokemonTypeList = [
     strengths: ["fighting", "dragon", "dark"],
     weaknesses: ["fire", "poison", "steel"],
   },
-] as const;
-
-export type PokemonType = (typeof pokemonTypeList)[number]["name"];
+];
 
 // https://www.epidemicjohto.com/t882-type-colors-hex-colors
 export const pokemonTypeColorMap = {

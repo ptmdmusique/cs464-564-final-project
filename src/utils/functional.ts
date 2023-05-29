@@ -4,3 +4,6 @@ export const getRandomNumber = (min: number, max: number) => {
 
 export const capitalizeFirstLetter = (str: string) =>
   str.charAt(0).toUpperCase() + str.slice(1);
+
+export const getRandomArrayElement = <T>(array: T[]): T =>
+  array[Math.floor(Math.random() * array.length)];
