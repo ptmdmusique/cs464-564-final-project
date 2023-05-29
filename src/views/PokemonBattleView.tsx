@@ -134,8 +134,9 @@ export default function PokemonBattleView({
   return (
     <Row>
       <PokemonCard
+        isBattling={isBattling}
         pokemon={battlePokemonList?.pokemon1}
-        isLoading={isLoading?.pokemon1 || isBattling}
+        isLoading={isLoading?.pokemon1}
         onIdChange={(id) => setPokemonIdList([id, pokemonIdList[1]])}
       />
 
@@ -155,8 +156,9 @@ export default function PokemonBattleView({
       </Col>
 
       <PokemonCard
+        isBattling={isBattling}
         pokemon={battlePokemonList?.pokemon2}
-        isLoading={isLoading?.pokemon2 || isBattling}
+        isLoading={isLoading?.pokemon2}
         onIdChange={(id) => setPokemonIdList([pokemonIdList[0], id])}
       />
     </Row>
@@ -166,11 +168,13 @@ export default function PokemonBattleView({
 interface PokemonCardRowProps {
   pokemon: Pokemon | undefined;
   isLoading: boolean | undefined;
+  isBattling: boolean;
   onIdChange: (id: number) => void;
 }
 
 const PokemonCard = ({
   pokemon,
+  isBattling,
   isLoading,
   onIdChange,
 }: PokemonCardRowProps) => {
@@ -192,7 +196,7 @@ const PokemonCard = ({
                       onSelected={(_, id) => {
                         onIdChange(id);
                       }}
-                      disabled={isLoading}
+                      disabled={isLoading || isBattling}
                     />
                   </Form.Group>
                 </Col>
@@ -201,7 +205,7 @@ const PokemonCard = ({
                   <Button
                     variant="outline-primary mt-auto w-100"
                     onClick={() => onIdChange(getRandomPokemonId())}
-                    disabled={isLoading}
+                    disabled={isLoading || isBattling}
                   >
                     Randomize
                   </Button>
