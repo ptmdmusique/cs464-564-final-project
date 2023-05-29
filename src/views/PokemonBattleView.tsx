@@ -3,15 +3,26 @@
 import { CompactPokemonInfoCard } from "@/components/CompactPokemonInfoCard";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { PokemonSearchBar } from "@/components/PokemonSearchBar";
+import { BattleResult } from "@/data/battle";
 import { usePokemonSpecies } from "@/hook/useAllPokemonNameList";
 import { useQueryParams } from "@/hook/useQueryParams";
+import { battle } from "@/utils/battle";
 import { getPokemonById, getRandomPokemonId } from "@/utils/pokemon";
 import { Pokemon } from "pokenode-ts";
 import { useEffect, useState } from "react";
 import { Button, Col, Form, Row } from "react-bootstrap";
 
+interface Props {
+  onBattleComplete: (battleResult: BattleResult) => void;
+  onIsBattlingChange: (isBattling: boolean) => void;
+}
+
+// TODO: add frenzy mode
 // ! Export default function because this component needs to be dynamically imported since we're NOT using SSR
-export default function PokemonBattleView() {
+export default function PokemonBattleView({
+  onIsBattlingChange,
+  onBattleComplete,
+}: Props) {
   // * Main pokemon data
   /**
    * The flow is as follows:
@@ -95,6 +106,27 @@ export default function PokemonBattleView() {
   // * Search bar related stuff
   const { isLoading: isFetchingAllPokemonNames } = usePokemonSpecies();
 
+  // * Battle stuff
+  const [isBattling, setIsBattling] = useState(false);
+  const [winner, setWinner] = useState<0 | 1 | null>(null);
+
+  const startBattle = async () => {
+    if (!battlePokemonList) {
+      return;
+    }
+
+    const { pokemon1, pokemon2 } = battlePokemonList;
+
+    setIsBattling(true);
+    onIsBattlingChange(true);
+    const battleResult = await battle(pokemon1, pokemon2);
+    setIsBattling(false);
+    onIsBattlingChange(false);
+
+    onBattleComplete(battleResult);
+    setWinner(battleResult.winner);
+  };
+
   if (isFetchingAllPokemonNames) {
     return <LoadingSpinner />;
   }
@@ -103,20 +135,28 @@ export default function PokemonBattleView() {
     <Row>
       <PokemonCard
         pokemon={battlePokemonList?.pokemon1}
-        isLoading={isLoading?.pokemon1}
+        isLoading={isLoading?.pokemon1 || isBattling}
         onIdChange={(id) => setPokemonIdList([id, pokemonIdList[1]])}
       />
 
       <Col
-        className="d-flex align-items-center justify-content-center h3 my-4 my-lg-0"
+        className="d-flex flex-column align-items-center justify-content-center my-4 my-lg-0"
         lg={2}
       >
-        ⚔️ VS ⚔️
+        <p className="h3">⚔️ VS ⚔️</p>
+
+        <Button
+          className="mt-3 w-100"
+          disabled={isBattling || !battlePokemonList}
+          onClick={startBattle}
+        >
+          {isBattling ? "Battling..." : "Battle!"}
+        </Button>
       </Col>
 
       <PokemonCard
         pokemon={battlePokemonList?.pokemon2}
-        isLoading={isLoading?.pokemon2}
+        isLoading={isLoading?.pokemon2 || isBattling}
         onIdChange={(id) => setPokemonIdList([pokemonIdList[0], id])}
       />
     </Row>

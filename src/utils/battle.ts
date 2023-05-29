@@ -1,3 +1,4 @@
+import { BattleResult, TurnHistory } from "@/data/battle";
 import { Move, Pokemon } from "pokenode-ts";
 import { getRandomArrayElement } from "./functional";
 import { getMoveByName } from "./pokemon";
@@ -26,7 +27,7 @@ export const battle = async (
   pokemon1: Pokemon,
   pokemon2: Pokemon,
   frenziedMode = false,
-): Promise<{ history: TurnHistory[]; winner: 0 | 1 | null }> => {
+): Promise<BattleResult> => {
   const USE_RANDOM_MOVE_CHANCE = frenziedMode ? 1 : 0.2;
 
   const history: TurnHistory[] = [];
@@ -112,13 +113,6 @@ export const battle = async (
 
   return { winner, history };
 };
-
-interface TurnHistory {
-  turnPokemonIndex: 0 | 1;
-  move: Move;
-  resultPokemon1: Pokemon;
-  resultPokemon2: Pokemon;
-}
 
 const getPokemonSortedRankedMoves = (
   pokemon: Pokemon,
