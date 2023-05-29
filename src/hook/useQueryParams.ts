@@ -21,7 +21,7 @@ export const useQueryParams = <T = {}>() => {
 
     if (query) {
       // @ts-expect-error --- Next JS strict typed route is still in beta so this is a workaround
-      router.push(`${pathname as PossibleRoute}${query}`);
+      router.replace(`${pathname as PossibleRoute}${query}`);
     }
   }
 

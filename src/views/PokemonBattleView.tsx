@@ -8,7 +8,7 @@ import { useQueryParams } from "@/hook/useQueryParams";
 import { getPokemonById, getRandomPokemonId } from "@/utils/pokemon";
 import { Pokemon } from "pokenode-ts";
 import { useEffect, useState } from "react";
-import { Col, Row } from "react-bootstrap";
+import { Button, Col, Form, Row } from "react-bootstrap";
 
 // ! Export default function because this component needs to be dynamically imported since we're NOT using SSR
 export default function PokemonBattleView() {
@@ -129,28 +129,43 @@ const PokemonCard = ({
 }: PokemonCardRowProps) => {
   return (
     <Col xs={12} lg={5}>
-      <Row className="gx-0 mb-2">
+      <Row className="gx-0">
         {/* // ! On first render, the pokemon won't be available
-            // ! so we need to disable the search bar until it is
+            // ! so we need to disable the card at that time to make sure it render properly
         */}
         {pokemon && (
-          <PokemonSearchBar
-            defaultSelectedName={pokemon.name}
-            onSelected={(_, id) => {
-              !isLoading && onIdChange(id);
-            }}
-            disabled={isLoading}
+          <CompactPokemonInfoCard
+            customCardTitle={
+              <Row className="gx-0 mb-5">
+                <Col md={9} lg={7} xl={9}>
+                  <Form.Group>
+                    <Form.Label className="h6 mb-0">Pokemon</Form.Label>
+                    <PokemonSearchBar
+                      selectedName={pokemon.name}
+                      onSelected={(_, id) => {
+                        onIdChange(id);
+                      }}
+                      disabled={isLoading}
+                    />
+                  </Form.Group>
+                </Col>
+
+                <Col className="mt-2 mt-md-0 ms-md-2 d-flex">
+                  <Button
+                    variant="outline-primary mt-auto w-100"
+                    onClick={() => onIdChange(getRandomPokemonId())}
+                    disabled={isLoading}
+                  >
+                    Randomize
+                  </Button>
+                </Col>
+              </Row>
+            }
+            defaultActiveSection="stats"
+            pokemon={pokemon}
+            isLoading={isLoading}
           />
         )}
-      </Row>
-
-      <Row className="gx-0">
-        <CompactPokemonInfoCard
-          usePokemonNameAsCardTitle
-          defaultActiveSection="stats"
-          pokemon={pokemon}
-          isLoading={isLoading}
-        />
       </Row>
     </Col>
   );

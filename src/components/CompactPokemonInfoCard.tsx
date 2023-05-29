@@ -13,7 +13,7 @@ import { PokemonTypeTag } from "./PokemonTypeTag";
 
 interface Props {
   pokemon?: Pokemon;
-  usePokemonNameAsCardTitle?: boolean;
+  customCardTitle?: ReactNode;
   defaultActiveSection?: AccordionType;
   isLoading?: boolean;
 }
@@ -25,7 +25,7 @@ interface Props {
  */
 export const CompactPokemonInfoCard = ({
   pokemon: _pokemon,
-  usePokemonNameAsCardTitle,
+  customCardTitle,
   defaultActiveSection = "basic-info",
   isLoading,
 }: Props) => {
@@ -44,11 +44,9 @@ export const CompactPokemonInfoCard = ({
   return (
     <Card className="shadow-sm">
       <Card.Body>
-        <Card.Title className="text-center">
-          {usePokemonNameAsCardTitle && pokemon
-            ? capitalizeFirstLetter(pokemon.name)
-            : "Pokemon Info"}
-        </Card.Title>
+        {customCardTitle ?? (
+          <Card.Title className="text-center">Pokemon Info</Card.Title>
+        )}
 
         {pokemon && !isLoading ? (
           <>
