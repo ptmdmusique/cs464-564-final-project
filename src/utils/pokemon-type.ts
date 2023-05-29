@@ -143,24 +143,24 @@ export const pokemonTypeInfoList: {
   },
 ];
 
-// https://www.epidemicjohto.com/t882-type-colors-hex-colors
+// https://www.epidemicjohto.com/t882-type-colors-hex-colors with some tweak to make it more readable
 export const pokemonTypeColorMap = {
   normal: "#A8A77A",
   fire: "#EE8130",
-  water: "#6390F0",
+  water: "#7199F0",
   electric: "#F7D02C",
   grass: "#7AC74C",
   ice: "#96D9D6",
-  fighting: "#C22E28",
-  poison: "#A33EA1",
+  fighting: "#FF7C78",
+  poison: "#CC7ECB",
   ground: "#E2BF65",
   flying: "#A98FF3",
   psychic: "#F95587",
   bug: "#A6B91A",
   rock: "#B6A136",
-  ghost: "#735797",
-  dragon: "#6F35FC",
-  dark: "#705746",
+  ghost: "#9276B8",
+  dragon: "#8A5DFC",
+  dark: "#A39286",
   steel: "#B7B7CE",
   fairy: "#D685AD",
 } as const satisfies Record<PokemonType, string>;

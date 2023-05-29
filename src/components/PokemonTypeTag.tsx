@@ -12,10 +12,8 @@ interface Props {
 export const PokemonTypeTag = ({ typeName, className, displayName }: Props) => {
   return (
     <div
-      style={{
-        border: `2px solid ${pokemonTypeColorMap[typeName]}`,
-      }}
-      className={`px-2 rounded ${className}`}
+      style={{ backgroundColor: pokemonTypeColorMap[typeName] }}
+      className={`px-2 py-1 rounded h6 mb-0 ${className}`}
     >
       {capitalizeFirstLetter(displayName ?? typeName)}
     </div>
