@@ -3,13 +3,14 @@
 
 import { Move, Pokemon } from "pokenode-ts";
 
-type CacheType = "move" | "pokemon";
+type CacheType = "move" | "pokemon" | "species";
 type CacheId = string | number;
 type CacheObject = Record<CacheId, Promise<Move | Pokemon>>;
 
 const customCache: Record<CacheType, CacheObject> = {
   move: {},
   pokemon: {},
+  species: {},
 };
 
 export const fromCache = <

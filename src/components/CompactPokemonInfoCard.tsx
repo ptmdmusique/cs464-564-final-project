@@ -15,6 +15,7 @@ interface Props {
   pokemon?: Pokemon;
   usePokemonNameAsCardTitle?: boolean;
   defaultActiveSection?: AccordionType;
+  isLoading?: boolean;
 }
 
 /**
@@ -26,14 +27,19 @@ export const CompactPokemonInfoCard = ({
   pokemon: _pokemon,
   usePokemonNameAsCardTitle,
   defaultActiveSection = "basic-info",
+  isLoading,
 }: Props) => {
   const [pokemon, setPokemon] = useState<Pokemon | null>(_pokemon ?? null);
 
   useEffect(() => {
-    if (!pokemon) {
+    if (!pokemon && !isLoading) {
       getRandomPokemon().then(setPokemon);
     }
-  }, [pokemon]);
+  }, [pokemon, isLoading]);
+
+  useEffect(() => {
+    _pokemon && setPokemon(_pokemon);
+  }, [_pokemon]);
 
   return (
     <Card className="shadow-sm">
@@ -44,24 +50,24 @@ export const CompactPokemonInfoCard = ({
             : "Pokemon Info"}
         </Card.Title>
 
-        {pokemon ? (
-          <PokemonInfoCard
-            pokemon={pokemon}
-            defaultActiveSection={defaultActiveSection}
-          />
+        {pokemon && !isLoading ? (
+          <>
+            <PokemonInfoCard
+              pokemon={pokemon}
+              defaultActiveSection={defaultActiveSection}
+            />
+
+            <div className="text-center mt-4">
+              <Link
+                href={`/pokedex?pokemon=${pokemon.id}`}
+                className="btn btn-outline-primary"
+              >
+                Find out more
+              </Link>
+            </div>
+          </>
         ) : (
           <LoadingSpinner />
-        )}
-
-        {pokemon && (
-          <div className="text-center mt-4">
-            <Link
-              href={`/pokedex?pokemon=${pokemon.id}`}
-              className="btn btn-outline-primary"
-            >
-              Find out more
-            </Link>
-          </div>
         )}
       </Card.Body>
     </Card>
