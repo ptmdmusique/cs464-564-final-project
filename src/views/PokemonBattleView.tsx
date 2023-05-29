@@ -108,7 +108,7 @@ export default function PokemonBattleView({
 
   // * Battle stuff
   const [isBattling, setIsBattling] = useState(false);
-  const [winner, setWinner] = useState<0 | 1 | null>(null);
+  const [battleResult, setBattleResult] = useState<BattleResult | null>(null);
 
   const startBattle = async () => {
     if (!battlePokemonList) {
@@ -119,13 +119,13 @@ export default function PokemonBattleView({
 
     setIsBattling(true);
     onIsBattlingChange(true);
-    setWinner(null);
+    setBattleResult(null);
 
     const battleResult = await battle(pokemon1, pokemon2);
 
     setIsBattling(false);
     onIsBattlingChange(false);
-    setWinner(battleResult.winner);
+    setBattleResult(battleResult);
 
     onBattleResultChange(battleResult);
   };
@@ -134,7 +134,7 @@ export default function PokemonBattleView({
     const newPokemonIdList = [...pokemonIdList];
     newPokemonIdList[index] = id;
     setPokemonIdList(newPokemonIdList);
-    setWinner(null);
+    setBattleResult(null);
     onBattleResultChange(null);
   };
 
@@ -142,15 +142,33 @@ export default function PokemonBattleView({
     return <LoadingSpinner />;
   }
 
-  return (
-    <Row>
+  const { winner, history } = battleResult ?? {};
+  const { pokemon1, pokemon2 } = battlePokemonList ?? {};
+
+  const renderPokemonCard = (index: 0 | 1) => {
+    const fainted = winner == undefined ? null : winner !== index;
+
+    let battleResultPokemon: Pokemon | undefined = undefined;
+    if (history) {
+      const { resultPokemon1, resultPokemon2 } = history[history.length - 1];
+      battleResultPokemon = index === 0 ? resultPokemon1 : resultPokemon2;
+    }
+
+    return (
       <PokemonCard
         isBattling={isBattling}
-        pokemon={battlePokemonList?.pokemon1}
-        isLoading={isLoading?.pokemon1}
-        onIdChange={(id) => onIdChange(id, 0)}
-        fainted={winner === 1 ? true : winner === 0 ? false : null}
+        pokemon={index === 0 ? pokemon1 : pokemon2}
+        isLoading={index === 0 ? isLoading?.pokemon1 : isLoading?.pokemon2}
+        onIdChange={(id) => onIdChange(id, index)}
+        fainted={fainted}
+        battleResultPokemon={battleResultPokemon}
       />
+    );
+  };
+
+  return (
+    <Row>
+      {renderPokemonCard(0)}
 
       <Col
         className="d-flex flex-column align-items-center justify-content-center my-4 my-lg-0"
@@ -167,13 +185,7 @@ export default function PokemonBattleView({
         </Button>
       </Col>
 
-      <PokemonCard
-        isBattling={isBattling}
-        pokemon={battlePokemonList?.pokemon2}
-        isLoading={isLoading?.pokemon2}
-        onIdChange={(id) => onIdChange(id, 1)}
-        fainted={winner === 0 ? true : winner === 1 ? false : null}
-      />
+      {renderPokemonCard(1)}
     </Row>
   );
 }
@@ -184,6 +196,7 @@ interface PokemonCardRowProps {
   isBattling: boolean;
   onIdChange: (id: number) => void;
   fainted: boolean | null;
+  battleResultPokemon: Pokemon | undefined;
 }
 
 const PokemonCard = ({
@@ -192,6 +205,7 @@ const PokemonCard = ({
   isLoading,
   onIdChange,
   fainted,
+  battleResultPokemon,
 }: PokemonCardRowProps) => {
   return (
     <Col xs={12} lg={5}>
@@ -231,6 +245,7 @@ const PokemonCard = ({
             pokemon={pokemon}
             isLoading={isLoading}
             fainted={fainted ?? false}
+            battleResultPokemon={battleResultPokemon}
           />
         )}
       </Row>

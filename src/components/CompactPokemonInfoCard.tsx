@@ -17,7 +17,11 @@ interface Props {
   customCardTitle?: ReactNode;
   defaultActiveSection?: AccordionType;
   isLoading?: boolean;
+
+  // * --- Battle stuff
   fainted?: boolean;
+  /** Used to render stat after a battle */
+  battleResultPokemon?: Pokemon;
 }
 
 /**
@@ -31,6 +35,7 @@ export const CompactPokemonInfoCard = ({
   defaultActiveSection = "basic-info",
   isLoading,
   fainted,
+  battleResultPokemon,
 }: Props) => {
   const [pokemon, setPokemon] = useState<Pokemon | null>(_pokemon ?? null);
 
@@ -57,6 +62,7 @@ export const CompactPokemonInfoCard = ({
               pokemon={pokemon}
               defaultActiveSection={defaultActiveSection}
               fainted={fainted}
+              battleResultPokemon={battleResultPokemon}
             />
 
             <div className="text-center mt-4">
@@ -80,8 +86,10 @@ const PokemonInfoCard = ({
   pokemon,
   defaultActiveSection,
   fainted,
+  battleResultPokemon,
 }: { pokemon: Pokemon } & Props) => {
-  const { sprites, name, id, height, weight, species, types } = pokemon;
+  const { sprites, name, id, height, weight, species, types, stats } = pokemon;
+  const resultStats = battleResultPokemon?.stats;
   const capitalizedName = capitalizeFirstLetter(name);
 
   return (
@@ -145,13 +153,45 @@ const PokemonInfoCard = ({
 
             <Accordion.Body>
               <ListGroup as="ol" variant="flush">
-                {pokemon.stats.map(({ base_stat, stat }) => (
-                  <StatItem
-                    key={stat.name}
-                    name={capitalizeFirstLetter(stat.name)}
-                    value={base_stat}
-                  />
-                ))}
+                {stats.map(({ base_stat, stat }, statIndex) => {
+                  const resultBaseStat = resultStats?.[statIndex].base_stat;
+
+                  return (
+                    <StatItem
+                      key={stat.name}
+                      name={capitalizeFirstLetter(stat.name)}
+                      value={
+                        // Currently only support HP
+                        resultBaseStat && stat.name === "hp" ? (
+                          <div className={style["result-stats"]}>
+                            <span
+                              className={`
+                                ${style["result-stats__old-stat"]}
+                                me-2
+                              `}
+                            >
+                              {base_stat}
+                            </span>
+
+                            <span
+                              className={
+                                style[
+                                  `result-stats__new-stat--${
+                                    resultBaseStat > 0 ? "success" : "danger"
+                                  }`
+                                ]
+                              }
+                            >
+                              {Math.round(resultBaseStat)}
+                            </span>
+                          </div>
+                        ) : (
+                          base_stat
+                        )
+                      }
+                    />
+                  );
+                })}
               </ListGroup>
             </Accordion.Body>
           </Accordion.Item>

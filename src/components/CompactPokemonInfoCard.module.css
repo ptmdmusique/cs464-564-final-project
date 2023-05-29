@@ -9,6 +9,24 @@
   animation: tilt-n-move-shaking 0.1s ease-in-out;
 }
 
+.result-stats {
+  font-weight: 800;
+}
+
+/* Colors are taken from https://tailwindcss.com/docs/customizing-colors */
+.result-stats__old-stat {
+  color: #a8a29e;
+  text-decoration: line-through;
+}
+
+.result-stats__new-stat--success {
+  color: #4ade80;
+}
+
+.result-stats__new-stat--danger {
+  color: #f87171;
+}
+
 /* https://unused-css.com/blog/css-shake-animation/ */
 @keyframes tilt-n-move-shaking {
   0% {
