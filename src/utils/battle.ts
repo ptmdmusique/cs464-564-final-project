@@ -40,11 +40,23 @@ export const battle = async (
 
   // * First fetch and rank all the moves
   // Fetch list of all pokemon moves
-  const moveInfoList = await Promise.all(
+  const moveSearchResults = await Promise.allSettled(
     battlePokemonList
-      .map(({ moves }) => moves.map(({ move }) => getMoveByName(move.name)))
+      .map(({ moves }) =>
+        moves
+          .slice(0, MAX_MOVE_SEARCH_PER_POKEMON)
+          .map(({ move }) => getMoveByName(move.name)),
+      )
       .flat(),
   );
+
+  // Ignore all the failed promises
+  const moveInfoList = moveSearchResults
+    .filter(
+      (promiseResult): promiseResult is PromiseFulfilledResult<Move> =>
+        promiseResult.status === "fulfilled" && promiseResult.value !== null,
+    )
+    .map(({ value }) => value);
 
   // Turn into a lookup for faster access
   const moveInfoLookup = Object.fromEntries(
@@ -120,11 +132,11 @@ const getPokemonSortedRankedMoves = (
   otherPokemon: Pokemon,
 ): { move: Move; damageDeal: number }[] => {
   const rankedMoveList = pokemon.moves
-    .map(({ move }) => moveInfoLookup[move.name])
-    .map<{ move: Move; damageDeal: number }>((move) => ({
-      move,
-      damageDeal: getMoveDamage(move, otherPokemon),
-    }))
+    .filter(({ move }) => !!moveInfoLookup[move.name])
+    .map<{ move: Move; damageDeal: number }>(({ move: moveInfo }) => {
+      const move = moveInfoLookup[moveInfo.name];
+      return { move, damageDeal: getMoveDamage(move, otherPokemon) };
+    })
     .sort((a, b) => b.damageDeal - a.damageDeal);
 
   return rankedMoveList;
@@ -179,3 +191,4 @@ const getNextIndex = (currentIndex: number) =>
   ((currentIndex + 1) % 2) as 0 | 1;
 
 const MAX_NUMBER_OF_TURN = 100;
+const MAX_MOVE_SEARCH_PER_POKEMON = 10; // Used to prevent being IP-blocked
