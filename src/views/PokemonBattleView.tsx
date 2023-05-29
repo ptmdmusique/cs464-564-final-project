@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
 import { Button, Col, Form, Row } from "react-bootstrap";
 
 interface Props {
-  onBattleComplete: (battleResult: BattleResult) => void;
+  onBattleResultChange: (battleResult: BattleResult | null) => void;
   onIsBattlingChange: (isBattling: boolean) => void;
 }
 
@@ -21,7 +21,7 @@ interface Props {
 // ! Export default function because this component needs to be dynamically imported since we're NOT using SSR
 export default function PokemonBattleView({
   onIsBattlingChange,
-  onBattleComplete,
+  onBattleResultChange,
 }: Props) {
   // * Main pokemon data
   /**
@@ -119,12 +119,23 @@ export default function PokemonBattleView({
 
     setIsBattling(true);
     onIsBattlingChange(true);
+    setWinner(null);
+
     const battleResult = await battle(pokemon1, pokemon2);
+
     setIsBattling(false);
     onIsBattlingChange(false);
-
-    onBattleComplete(battleResult);
     setWinner(battleResult.winner);
+
+    onBattleResultChange(battleResult);
+  };
+
+  const onIdChange = (id: number, index: 0 | 1) => {
+    const newPokemonIdList = [...pokemonIdList];
+    newPokemonIdList[index] = id;
+    setPokemonIdList(newPokemonIdList);
+    setWinner(null);
+    onBattleResultChange(null);
   };
 
   if (isFetchingAllPokemonNames) {
@@ -137,7 +148,8 @@ export default function PokemonBattleView({
         isBattling={isBattling}
         pokemon={battlePokemonList?.pokemon1}
         isLoading={isLoading?.pokemon1}
-        onIdChange={(id) => setPokemonIdList([id, pokemonIdList[1]])}
+        onIdChange={(id) => onIdChange(id, 0)}
+        fainted={winner === 1 ? true : winner === 0 ? false : null}
       />
 
       <Col
@@ -159,7 +171,8 @@ export default function PokemonBattleView({
         isBattling={isBattling}
         pokemon={battlePokemonList?.pokemon2}
         isLoading={isLoading?.pokemon2}
-        onIdChange={(id) => setPokemonIdList([pokemonIdList[0], id])}
+        onIdChange={(id) => onIdChange(id, 1)}
+        fainted={winner === 0 ? true : winner === 1 ? false : null}
       />
     </Row>
   );
@@ -170,6 +183,7 @@ interface PokemonCardRowProps {
   isLoading: boolean | undefined;
   isBattling: boolean;
   onIdChange: (id: number) => void;
+  fainted: boolean | null;
 }
 
 const PokemonCard = ({
@@ -177,6 +191,7 @@ const PokemonCard = ({
   isBattling,
   isLoading,
   onIdChange,
+  fainted,
 }: PokemonCardRowProps) => {
   return (
     <Col xs={12} lg={5}>
@@ -215,6 +230,7 @@ const PokemonCard = ({
             defaultActiveSection="stats"
             pokemon={pokemon}
             isLoading={isLoading}
+            fainted={fainted ?? false}
           />
         )}
       </Row>

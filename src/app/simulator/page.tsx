@@ -17,7 +17,7 @@ const SimulatorPage = () => {
       <h1 className="text-center my-4">Battle Simulator ⚔️</h1>
 
       <PokemonBattleView
-        onBattleComplete={setBattleResult}
+        onBattleResultChange={setBattleResult}
         onIsBattlingChange={setIsBattling}
       />
     </PageLayout>
