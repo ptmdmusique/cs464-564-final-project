@@ -7,25 +7,51 @@ import Image from "next/image";
 import Link from "next/link";
 import { Pokemon } from "pokenode-ts";
 import { ReactNode, useEffect, useState } from "react";
-import { Card, ListGroup, Row } from "react-bootstrap";
+import { Accordion, Card, ListGroup, Row } from "react-bootstrap";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { PokemonTypeTag } from "./PokemonTypeTag";
 
-export const CompactPokemonInfoCard = () => {
-  const [pokemon, setPokemon] = useState<Pokemon | null>(null);
+interface Props {
+  pokemon?: Pokemon;
+  usePokemonNameAsCardTitle?: boolean;
+  defaultActiveSection?: AccordionType;
+}
+
+/**
+ * Display a compact version of the Pokemon info card.
+ *
+ * Will randomly fetch a Pokemon if none is provided.
+ */
+export const CompactPokemonInfoCard = ({
+  pokemon: _pokemon,
+  usePokemonNameAsCardTitle,
+  defaultActiveSection = "basic-info",
+}: Props) => {
+  const [pokemon, setPokemon] = useState<Pokemon | null>(_pokemon ?? null);
 
   useEffect(() => {
-    getRandomPokemon().then((pokemon) => {
-      setPokemon(pokemon);
-    });
-  }, []);
+    if (!pokemon) {
+      getRandomPokemon().then(setPokemon);
+    }
+  }, [pokemon]);
 
   return (
     <Card className="shadow-sm">
       <Card.Body>
-        <Card.Title className="text-center">Pokemon Info</Card.Title>
+        <Card.Title className="text-center">
+          {usePokemonNameAsCardTitle && pokemon
+            ? capitalizeFirstLetter(pokemon.name)
+            : "Pokemon Info"}
+        </Card.Title>
 
-        {pokemon ? <PokemonInfoCard pokemon={pokemon} /> : <LoadingSpinner />}
+        {pokemon ? (
+          <PokemonInfoCard
+            pokemon={pokemon}
+            defaultActiveSection={defaultActiveSection}
+          />
+        ) : (
+          <LoadingSpinner />
+        )}
 
         {pokemon && (
           <div className="text-center mt-4">
@@ -33,7 +59,7 @@ export const CompactPokemonInfoCard = () => {
               href={`/pokedex?pokemon=${pokemon.id}`}
               className="btn btn-outline-primary"
             >
-              Find out more!
+              Find out more
             </Link>
           </div>
         )}
@@ -42,7 +68,10 @@ export const CompactPokemonInfoCard = () => {
   );
 };
 
-const PokemonInfoCard = ({ pokemon }: { pokemon: Pokemon }) => {
+const PokemonInfoCard = ({
+  pokemon,
+  defaultActiveSection,
+}: { pokemon: Pokemon } & Props) => {
   const { sprites, name, id, height, weight, species, types } = pokemon;
   const capitalizedName = capitalizeFirstLetter(name);
 
@@ -59,28 +88,52 @@ const PokemonInfoCard = ({ pokemon }: { pokemon: Pokemon }) => {
       </Row>
 
       <Row className="mt-2">
-        <ListGroup as="ol" variant="flush">
-          <StatItem name="Name" value={capitalizedName} />
-          <StatItem name="ID" value={id} />
+        <Accordion defaultActiveKey={defaultActiveSection}>
+          <Accordion.Item eventKey={"basic-info" satisfies AccordionType}>
+            <Accordion.Header>Basic info</Accordion.Header>
 
-          <StatItem name="Height" value={`${height} dm`} />
-          <StatItem name="Weight" value={`${weight} hg`} />
+            <Accordion.Body>
+              <ListGroup as="ol" variant="flush">
+                <StatItem name="Name" value={capitalizedName} />
+                <StatItem name="ID" value={id} />
 
-          <StatItem
-            name="Species"
-            value={capitalizeFirstLetter(species.name)}
-          />
-          <StatItem
-            name="Types"
-            value={types.map(({ type }) => (
-              <PokemonTypeTag
-                key={type.name}
-                typeName={type.name as PokemonType}
-                className="me-2"
-              />
-            ))}
-          />
-        </ListGroup>
+                <StatItem name="Height" value={`${height} dm`} />
+                <StatItem name="Weight" value={`${weight} hg`} />
+
+                <StatItem
+                  name="Species"
+                  value={capitalizeFirstLetter(species.name)}
+                />
+                <StatItem
+                  name="Types"
+                  value={types.map(({ type }) => (
+                    <PokemonTypeTag
+                      key={type.name}
+                      typeName={type.name as PokemonType}
+                      className="me-2"
+                    />
+                  ))}
+                />
+              </ListGroup>
+            </Accordion.Body>
+          </Accordion.Item>
+
+          <Accordion.Item eventKey={"stats" satisfies AccordionType}>
+            <Accordion.Header>Stats</Accordion.Header>
+
+            <Accordion.Body>
+              <ListGroup as="ol" variant="flush">
+                {pokemon.stats.map(({ base_stat, stat }) => (
+                  <StatItem
+                    key={stat.name}
+                    name={capitalizeFirstLetter(stat.name)}
+                    value={base_stat}
+                  />
+                ))}
+              </ListGroup>
+            </Accordion.Body>
+          </Accordion.Item>
+        </Accordion>
       </Row>
     </>
   );
@@ -100,3 +153,5 @@ const StatItem = ({ name, value }: { name: string; value: ReactNode }) => (
 );
 
 const IMAGE_SIZE = 300;
+
+type AccordionType = "basic-info" | "stats";
