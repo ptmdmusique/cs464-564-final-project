@@ -9,11 +9,9 @@ import { Col, Row } from "react-bootstrap";
 
 export default function Home() {
   return (
-    <PageLayout>
-      <h1 className="mt-4 text-center">
-        <PokeBall className="me-2" />
-        Welcome to PokeStats
-        <PokeBall className="ms-2" />
+    <PageLayout className="pb-4">
+      <h1 className="my-4 text-center">
+        Welcome to <PokeBall className="ms-2" /> PokeStats
       </h1>
 
       <Row>
