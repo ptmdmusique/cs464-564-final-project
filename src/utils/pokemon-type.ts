@@ -120,6 +120,7 @@ export const pokemonTypeList = [
 
 export type PokemonType = (typeof pokemonTypeList)[number]["name"];
 
+// https://www.epidemicjohto.com/t882-type-colors-hex-colors
 export const pokemonTypeColorMap = {
   normal: "#A8A77A",
   fire: "#EE8130",
