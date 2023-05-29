@@ -6,7 +6,7 @@ import { useState } from "react";
 import { Button, Card } from "react-bootstrap";
 
 export const FunFactCard = () => {
-  const [factIndex, setFactIndex] = useState(getRandomIndex());
+  const [factIndex, setFactIndex] = useState(0);
 
   return (
     <Card className="shadow-sm">
