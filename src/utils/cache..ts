@@ -4,11 +4,10 @@
 import { Move, Pokemon } from "pokenode-ts";
 
 type CacheType = "move" | "pokemon";
+type CacheId = string | number;
+type CacheObject = Record<CacheId, Promise<Move | Pokemon>>;
 
-const customCache: Record<
-  CacheType,
-  Record<number, Promise<Move | Pokemon>>
-> = {
+const customCache: Record<CacheType, CacheObject> = {
   move: {},
   pokemon: {},
 };
@@ -19,17 +18,17 @@ export const fromCache = <
 >(
   type: T,
   getter: () => R,
-  id: number,
+  key: CacheId,
 ): R => {
-  const cached = customCache[type][id];
+  const cached = customCache[type][key];
   if (cached) {
     return cached as R;
   }
 
-  const typeCache = customCache[type];
-  typeCache[id] = getter();
+  const typeCache: CacheObject = customCache[type];
+  typeCache[key] = getter();
 
-  return typeCache[id] as R;
+  return typeCache[key] as R;
 };
 
 type GetReturnType<T extends CacheType> = T extends "move" ? Move : Pokemon;

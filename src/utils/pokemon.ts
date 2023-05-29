@@ -14,5 +14,5 @@ export const getPokemonById = (id: number) =>
 export const getRandomPokemon = () =>
   getPokemonById(getRandomNumber(MIN_POKEMON_ID, MAX_POKEMON_ID));
 
-export const getMoveById = (id: number) =>
-  fromCache("move", () => moveClient.getMoveById(id), id);
+export const getMoveByName = (name: string) =>
+  fromCache("move", () => moveClient.getMoveByName(name), name);
