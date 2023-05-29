@@ -10,8 +10,16 @@ import { Pokemon } from "pokenode-ts";
 import { useEffect, useState } from "react";
 import { Col, Row } from "react-bootstrap";
 
+// ! Export default function because this component needs to be dynamically imported since we're NOT using SSR
 export default function PokemonBattleView() {
   // * Main pokemon data
+  /**
+   * The flow is as follows:
+   * 1. pokemonIdList changed -> trigger useEffect which possibly changes queryParams
+   * 2. queryParams changed -> trigger useEffect which possibly fetches the Pokemon
+   * This is to avoid infinite loop and also makes it easier to follow since it's linear
+   */
+
   const { queryParams, setQueryParams } = useQueryParams<{
     pokemon1: string;
     pokemon2: string;
@@ -42,23 +50,30 @@ export default function PokemonBattleView() {
       pokemonIdList[1].toLocaleString() !== queryParams?.pokemon2;
     const queryChanged = id1Changed || id2Changed;
 
-    if ((!queryChanged && !!battlePokemonList) || isLoading) {
+    if (!queryChanged) {
       return;
     }
 
-    // Re-update the query params when the pokemonIdList changes
-    if (queryChanged) {
-      setQueryParams({
-        pokemon1: pokemonIdList[0].toString(),
-        pokemon2: pokemonIdList[1].toString(),
-      });
-    }
+    setQueryParams({
+      pokemon1: pokemonIdList[0].toString(),
+      pokemon2: pokemonIdList[1].toString(),
+    });
+  }, [pokemonIdList, setQueryParams, queryParams]);
 
-    debugger;
+  useEffect(() => {
+    const newId1 = parseInt(queryParams?.pokemon1 ?? "");
+    const newId2 = parseInt(queryParams?.pokemon2 ?? "");
+
+    const id1Changed = battlePokemonList?.pokemon1.id !== newId1;
+    const id2Changed = battlePokemonList?.pokemon2.id !== newId2;
+
+    if (!id1Changed && !id2Changed) {
+      return;
+    }
 
     // Fetch the Pokemon
     setIsLoading({ pokemon1: id1Changed, pokemon2: id2Changed });
-    Promise.all(pokemonIdList.map(getPokemonById))
+    Promise.all([newId1, newId2].map(getPokemonById))
       .then(([pokemon1, pokemon2]) => {
         setBattlePokemonList({ pokemon1, pokemon2 });
       })
@@ -68,13 +83,7 @@ export default function PokemonBattleView() {
       .finally(() => {
         setIsLoading(null);
       });
-  }, [
-    pokemonIdList,
-    setQueryParams,
-    battlePokemonList,
-    queryParams,
-    isLoading,
-  ]);
+  }, [queryParams, battlePokemonList]);
 
   // * Search bar related stuff
   const { isLoading: isFetchingAllPokemonNames } = usePokemonSpecies();
