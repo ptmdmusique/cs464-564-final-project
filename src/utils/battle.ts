@@ -185,7 +185,8 @@ const getMoveDamage = (move: Move, pokemon: Pokemon, otherPokemon: Pokemon) => {
   const movePower = move.power ?? 0;
   const damageDeal =
     Math.max(movePower + pokemonBaseAttack - otherBaseDefense, 1) *
-    moveEffectivenessMultiplier;
+    moveEffectivenessMultiplier *
+    DAMAGE_MULTIPLIER;
 
   return damageDeal;
 };
@@ -206,3 +207,4 @@ const getNextIndex = (currentIndex: number) =>
 
 const MAX_NUMBER_OF_TURN = 100;
 const MAX_MOVE_SEARCH_PER_POKEMON = 10; // Used to prevent being IP-blocked
+const DAMAGE_MULTIPLIER = 0.2; // Used to make battle last longer
