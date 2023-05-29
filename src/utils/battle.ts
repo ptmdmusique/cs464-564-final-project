@@ -21,14 +21,14 @@ import { PokemonType, pokemonTypeInfoList } from "./pokemon-type";
  * * Each turn, the Pokemon will use the move with the highest score, but will also randomly choose a move with some random chance
  * * The battle ends when one of the Pokemon has no HP left
 
- * @param frenziedMode If true, the pokemons will use random moves instead of the best ones
+ * @param frenzyMode If true, the pokemons will use random moves instead of the best ones
  */
 export const battle = async (
   pokemon1: Pokemon,
   pokemon2: Pokemon,
-  frenziedMode = false,
+  frenzyMode = false,
 ): Promise<BattleResult> => {
-  const USE_RANDOM_MOVE_CHANCE = frenziedMode ? 1 : 0.2;
+  const USE_RANDOM_MOVE_CHANCE = frenzyMode ? 1 : 0.4;
 
   const history: TurnHistory[] = [];
 
@@ -206,5 +206,5 @@ const getNextIndex = (currentIndex: number) =>
   ((currentIndex + 1) % 2) as 0 | 1;
 
 const MAX_NUMBER_OF_TURN = 100;
-const MAX_MOVE_SEARCH_PER_POKEMON = 10; // Used to prevent being IP-blocked
+const MAX_MOVE_SEARCH_PER_POKEMON = 50; // Used to prevent being IP-blocked
 const DAMAGE_MULTIPLIER = 0.2; // Used to make battle last longer

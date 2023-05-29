@@ -10,7 +10,14 @@ import { battle } from "@/utils/battle";
 import { getPokemonById, getRandomPokemonId } from "@/utils/pokemon";
 import { Pokemon } from "pokenode-ts";
 import { useEffect, useState } from "react";
-import { Button, Col, Form, Row } from "react-bootstrap";
+import {
+  Button,
+  Col,
+  Form,
+  OverlayTrigger,
+  Row,
+  Tooltip,
+} from "react-bootstrap";
 
 interface Props {
   onBattleResultChange: (battleResult: BattleResult | null) => void;
@@ -109,6 +116,7 @@ export default function PokemonBattleView({
   // * Battle stuff
   const [isBattling, setIsBattling] = useState(false);
   const [battleResult, setBattleResult] = useState<BattleResult | null>(null);
+  const [isFrenzyMode, setIsFrenzyMode] = useState(false);
 
   const startBattle = async () => {
     if (!battlePokemonList) {
@@ -121,7 +129,7 @@ export default function PokemonBattleView({
     onIsBattlingChange(true);
     setBattleResult(null);
 
-    const battleResult = await battle(pokemon1, pokemon2);
+    const battleResult = await battle(pokemon1, pokemon2, isFrenzyMode);
 
     setIsBattling(false);
     onIsBattlingChange(false);
@@ -183,6 +191,18 @@ export default function PokemonBattleView({
         >
           {isBattling ? "Battling..." : "Battle!"}
         </Button>
+
+        <OverlayTrigger
+          placement="bottom"
+          overlay={<Tooltip>Pokemons will choose all moves randomly!</Tooltip>}
+        >
+          <Form.Check
+            type="switch"
+            label="Frenzy Mode 🔥"
+            className="mt-2"
+            onChange={(e) => setIsFrenzyMode(e.target.checked)}
+          />
+        </OverlayTrigger>
       </Col>
 
       {renderPokemonCard(1)}
