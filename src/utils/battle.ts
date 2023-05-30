@@ -33,7 +33,7 @@ export const battle = async (
   pokemon2: Pokemon,
   frenzyMode = false,
 ): Promise<BattleResult> => {
-  const USE_RANDOM_MOVE_CHANCE = frenzyMode ? 1 : 0.4;
+  const USE_RANDOM_MOVE_CHANCE = frenzyMode ? 1 : 0.1;
 
   const history: TurnHistory[] = [];
 
