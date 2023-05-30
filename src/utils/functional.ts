@@ -1,4 +1,5 @@
 import { Pokemon, PokemonShape } from 'pokenode-ts';
+import { DoughnutData } from '@/app/statistics/page';
 import { json } from 'stream/consumers';
 
 export const getRandomNumber = (min: number, max: number) => {
@@ -39,6 +40,18 @@ export const getGalar = (pokemonList: Pokemon[]) => {
 };
 export const getPaldea = (pokemonList: Pokemon[]) => {
   return pokemonList.slice(905, 1009);
+};
+
+//Extract Pokemon ID, name, and sprite image based on pokemon ID
+export const getPokemonData = (pokemonList: Pokemon[], pokemonIDs: number[]) => {
+  let result: DoughnutData[] = [];
+  for (let i = 0; i < pokemonIDs.length; i++) {
+    let id = pokemonIDs[i];
+    let name = pokemonList[pokemonIDs[i] - 1].name;
+    let sprite = pokemonList[pokemonIDs[i] - 1].sprites.other?.['official-artwork'].front_default;
+    result.push({ id: id, name: name, sprite: sprite });
+  }
+  return result;
 };
 
 // Weight Charts

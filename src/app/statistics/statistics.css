@@ -14,3 +14,16 @@ canvas {
   flex-flow: column wrap;
   max-height: 100px;
 }
+
+.pokemon-table {
+  max-width: 400px;
+}
+
+.pokemon-table-img {
+  width: 70px;
+  height: auto;
+}
+
+.shape-outline {
+  max-width: 800px;
+}

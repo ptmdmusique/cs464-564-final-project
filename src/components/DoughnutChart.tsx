@@ -10,13 +10,11 @@ interface DoughnutChartProps {
   title: string;
   label: string;
   dataset: { id: number[]; labels: string[]; data: number[] };
-  units: string;
+  handleClick: (index: number) => void;
 }
 
-export const DoughnutChart = ({ dataset, title, label, units }: DoughnutChartProps) => {
+export const DoughnutChart = ({ dataset, title, label, handleClick }: DoughnutChartProps) => {
   const colorScheme = getRandomColors(dataset.labels.length);
-
-  //TODO: On click render a chart on the bottom with pictures of all the Pokemon with that body shape
   const data = {
     labels: dataset.labels,
     datasets: [
@@ -32,6 +30,9 @@ export const DoughnutChart = ({ dataset, title, label, units }: DoughnutChartPro
 
   const options = {
     maintainAspectRatio: false,
+    onClick: (event: any, element: any, chart: any) => {
+      handleClick(element[0].index);
+    },
   };
 
   return (
