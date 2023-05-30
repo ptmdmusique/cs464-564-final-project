@@ -257,7 +257,7 @@ const PokemonCard = ({
                 </Col>
               </Row>
             }
-            defaultActiveSection="stats"
+            defaultActiveSection={null}
             pokemon={pokemon}
             isLoading={isLoading}
             fainted={fainted ?? false}

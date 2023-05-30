@@ -1,12 +1,12 @@
 .fainted {
   background-color: rgba(0, 0, 0, 0.5);
   color: white;
-  animation: tilt-n-move-shaking 0.1s ease-in-out;
+  animation: fade-in 0.2s ease-in-out;
 }
 
 .fainted-img {
   filter: grayscale(100%);
-  animation: tilt-n-move-shaking 0.1s ease-in-out;
+  animation: tilt-n-move-shaking 0.2s ease-in-out;
 }
 
 .result-stats {
@@ -29,5 +29,14 @@
   }
   100% {
     transform: translate(0, 0) rotate(0deg);
+  }
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
   }
 }

@@ -15,7 +15,7 @@ import { PokemonTypeTag } from "./PokemonTypeTag";
 interface Props {
   pokemon?: Pokemon;
   customCardTitle?: ReactNode;
-  defaultActiveSection?: AccordionType;
+  defaultActiveSection?: AccordionType | null;
   isLoading?: boolean;
 
   // * --- Battle stuff
