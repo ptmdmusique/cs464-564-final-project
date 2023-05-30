@@ -1,4 +1,9 @@
-import { BattleResult, TurnHistory, isDamageMove } from "@/data/battle";
+import {
+  BattleResult,
+  DamageEffectiveness,
+  TurnHistory,
+  isDamageMove,
+} from "@/data/battle";
 import { Move, Pokemon } from "pokenode-ts";
 import { getRandomArrayElement } from "./functional";
 import { getMoveByName } from "./pokemon";
@@ -68,7 +73,7 @@ export const battle = async (
       getPokemonSortedRankedMoves(
         pokemon,
         moveInfoLookup,
-        battlePokemonList[getNextIndex(index)],
+        battlePokemonList[getNextPokemonIndex(index)],
       ),
   );
 
@@ -87,7 +92,7 @@ export const battle = async (
   // * Then simulate the battle
   let turnPokemonIndex: 0 | 1 = Math.round(Math.random()) as 0 | 1;
   for (let turn = 0; turn < MAX_NUMBER_OF_TURN; turn++) {
-    const nextIndex = getNextIndex(turnPokemonIndex);
+    const nextIndex = getNextPokemonIndex(turnPokemonIndex);
 
     const mainPokemon = structuredClone(battlePokemonList[turnPokemonIndex]);
     const otherPokemon = structuredClone(battlePokemonList[nextIndex]);
@@ -97,7 +102,7 @@ export const battle = async (
     // Randomly choose between all moves with USE_RANDOM_MOVE_CHANCE chance
     //  or get move with highest damage deal
     //  or randomly choose between the highest ranked moves if there are more than one
-    const { damageDeal, move } = getRandomArrayElement(
+    const { damageDeal, move, damageEffectiveness } = getRandomArrayElement(
       Math.random() < USE_RANDOM_MOVE_CHANCE
         ? rankedMoveList
         : pokemonWithHighestRankedMoveList[turnPokemonIndex],
@@ -110,8 +115,11 @@ export const battle = async (
       turnPokemonIndex,
       move,
       damageDeal,
-      resultPokemon1: turnPokemonIndex === 0 ? mainPokemon : otherPokemon,
-      resultPokemon2: turnPokemonIndex === 1 ? mainPokemon : otherPokemon,
+      damageEffectiveness,
+      resultPokemonList: [
+        turnPokemonIndex === 0 ? mainPokemon : otherPokemon,
+        turnPokemonIndex === 1 ? mainPokemon : otherPokemon,
+      ],
     });
 
     if (getHp(otherPokemon) <= 0) {
@@ -131,28 +139,36 @@ const getPokemonSortedRankedMoves = (
   pokemon: Pokemon,
   moveInfoLookup: Record<string, Move>,
   otherPokemon: Pokemon,
-): { move: Move; damageDeal: number }[] => {
+): {
+  move: Move;
+  damageDeal: number;
+  damageEffectiveness: DamageEffectiveness;
+}[] => {
   const rankedMoveList = pokemon.moves
     .filter(({ move }) => !!moveInfoLookup[move.name])
-    .map<{ move: Move; damageDeal: number }>(({ move: moveInfo }) => {
+    .map(({ move: moveInfo }) => {
       const move = moveInfoLookup[moveInfo.name];
-      return { move, damageDeal: getMoveDamage(move, pokemon, otherPokemon) };
+      return { move, ...getMoveDamage(move, pokemon, otherPokemon) };
     })
     .sort((a, b) => b.damageDeal - a.damageDeal);
 
   return rankedMoveList;
 };
 
-const getMoveDamage = (move: Move, pokemon: Pokemon, otherPokemon: Pokemon) => {
+const getMoveDamage = (
+  move: Move,
+  pokemon: Pokemon,
+  otherPokemon: Pokemon,
+): { damageEffectiveness: DamageEffectiveness; damageDeal: number } => {
   if (!isDamageMove(move)) {
     // Currently we don't care for this
-    return 0;
+    return { damageEffectiveness: "normal", damageDeal: 0 };
   }
 
   const moveElement = move.type.name as PokemonType;
   const otherPokemonElementList = otherPokemon.types.map((t) => t.type.name);
 
-  let moveEffectivenessMultiplier = 1;
+  let damageEffectiveness: DamageEffectiveness = "normal";
   for (const otherPokemonElement of otherPokemonElementList) {
     const otherTypeInfo = pokemonTypeInfoList.find(
       (typeInfo) => typeInfo.name === otherPokemonElement,
@@ -167,13 +183,13 @@ const getMoveDamage = (move: Move, pokemon: Pokemon, otherPokemon: Pokemon) => {
 
     // In priority order
     if (immunes.includes(moveElement)) {
-      moveEffectivenessMultiplier = 0;
+      damageEffectiveness = "immune";
       break;
     } else if (weaknesses.includes(moveElement)) {
-      moveEffectivenessMultiplier *= 2;
+      damageEffectiveness = "not-very";
       break;
     } else if (strengths.includes(moveElement)) {
-      moveEffectivenessMultiplier *= 0.5;
+      damageEffectiveness = "very";
       break;
     }
   }
@@ -185,10 +201,10 @@ const getMoveDamage = (move: Move, pokemon: Pokemon, otherPokemon: Pokemon) => {
   const movePower = move.power ?? 0;
   const damageDeal =
     Math.max(movePower + pokemonBaseAttack - otherBaseDefense, 1) *
-    moveEffectivenessMultiplier *
+    getDamageMultiplierFromEffectiveness(damageEffectiveness) *
     DAMAGE_MULTIPLIER;
 
-  return damageDeal;
+  return { damageDeal, damageEffectiveness };
 };
 
 const getHp = (pokemon: Pokemon) =>
@@ -202,8 +218,23 @@ const getAtk = (pokemon: Pokemon, special: boolean) =>
   pokemon.stats.find((s) => (special ? "special-attack" : "attack"))
     ?.base_stat ?? 0;
 
-const getNextIndex = (currentIndex: number) =>
+export const getNextPokemonIndex = (currentIndex: number) =>
   ((currentIndex + 1) % 2) as 0 | 1;
+
+const getDamageMultiplierFromEffectiveness = (
+  damageEffectiveness: DamageEffectiveness,
+) => {
+  switch (damageEffectiveness) {
+    case "immune":
+      return 0;
+    case "not-very":
+      return 0.5;
+    case "very":
+      return 2;
+    case "normal":
+      return 1;
+  }
+};
 
 const MAX_NUMBER_OF_TURN = 100;
 const MAX_MOVE_SEARCH_PER_POKEMON = 50; // Used to prevent being IP-blocked

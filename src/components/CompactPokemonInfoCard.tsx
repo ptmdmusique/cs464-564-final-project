@@ -164,22 +164,15 @@ const PokemonInfoCard = ({
                         // Currently only support HP
                         resultBaseStat && stat.name === "hp" ? (
                           <div className={style["result-stats"]}>
-                            <span
-                              className={`
-                                ${style["result-stats__old-stat"]}
-                                me-2
-                              `}
-                            >
+                            <span className="text-decoration-line-through text-secondary me-2">
                               {base_stat}
                             </span>
 
                             <span
                               className={
-                                style[
-                                  `result-stats__new-stat--${
-                                    resultBaseStat > 0 ? "success" : "danger"
-                                  }`
-                                ]
+                                resultBaseStat > 0
+                                  ? "text-success"
+                                  : "text-danger"
                               }
                             >
                               {Math.round(resultBaseStat)}

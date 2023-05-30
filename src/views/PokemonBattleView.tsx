@@ -24,7 +24,6 @@ interface Props {
   onIsBattlingChange: (isBattling: boolean) => void;
 }
 
-// TODO: add frenzy mode
 // ! Export default function because this component needs to be dynamically imported since we're NOT using SSR
 export default function PokemonBattleView({
   onIsBattlingChange,
@@ -52,14 +51,11 @@ export default function PokemonBattleView({
       : getRandomPokemonId(),
   ]);
 
-  const [isLoading, setIsLoading] = useState<{
-    pokemon1: boolean;
-    pokemon2: boolean;
-  } | null>(null);
-  const [battlePokemonList, setBattlePokemonList] = useState<{
-    pokemon1: Pokemon;
-    pokemon2: Pokemon;
-  } | null>(null);
+  /** Loading state per pokemon */
+  const [isLoading, setIsLoading] = useState<[boolean, boolean] | null>(null);
+  const [battlePokemonList, setBattlePokemonList] = useState<
+    [Pokemon, Pokemon] | null
+  >(null);
 
   useEffect(() => {
     const id1Changed =
@@ -89,18 +85,18 @@ export default function PokemonBattleView({
     const newId1 = parseInt(queryId1 ?? "");
     const newId2 = parseInt(queryId2 ?? "");
 
-    const id1Changed = battlePokemonList?.pokemon1.id !== newId1;
-    const id2Changed = battlePokemonList?.pokemon2.id !== newId2;
+    const id1Changed = battlePokemonList?.[0].id !== newId1;
+    const id2Changed = battlePokemonList?.[1].id !== newId2;
 
     if (!id1Changed && !id2Changed) {
       return;
     }
 
     // Fetch the Pokemon
-    setIsLoading({ pokemon1: id1Changed, pokemon2: id2Changed });
+    setIsLoading([id1Changed, id2Changed]);
     Promise.all([newId1, newId2].map(getPokemonById))
       .then(([pokemon1, pokemon2]) => {
-        setBattlePokemonList({ pokemon1, pokemon2 });
+        setBattlePokemonList([pokemon1, pokemon2]);
       })
       .catch((err) => {
         console.error(err);
@@ -123,7 +119,7 @@ export default function PokemonBattleView({
       return;
     }
 
-    const { pokemon1, pokemon2 } = battlePokemonList;
+    const [pokemon1, pokemon2] = battlePokemonList;
 
     setIsBattling(true);
     onIsBattlingChange(true);
@@ -151,22 +147,22 @@ export default function PokemonBattleView({
   }
 
   const { winner, history } = battleResult ?? {};
-  const { pokemon1, pokemon2 } = battlePokemonList ?? {};
+  const [pokemon1, pokemon2] = battlePokemonList ?? [];
 
   const renderPokemonCard = (index: 0 | 1) => {
     const fainted = winner == undefined ? null : winner !== index;
 
     let battleResultPokemon: Pokemon | undefined = undefined;
     if (history) {
-      const { resultPokemon1, resultPokemon2 } = history[history.length - 1];
-      battleResultPokemon = index === 0 ? resultPokemon1 : resultPokemon2;
+      const { resultPokemonList } = history[history.length - 1];
+      battleResultPokemon = resultPokemonList[index];
     }
 
     return (
       <PokemonCard
         isBattling={isBattling}
         pokemon={index === 0 ? pokemon1 : pokemon2}
-        isLoading={index === 0 ? isLoading?.pokemon1 : isLoading?.pokemon2}
+        isLoading={index === 0 ? isLoading?.[0] : isLoading?.[1]}
         onIdChange={(id) => onIdChange(id, index)}
         fainted={fainted}
         battleResultPokemon={battleResultPokemon}

@@ -4,8 +4,8 @@ export interface TurnHistory {
   turnPokemonIndex: 0 | 1;
   move: Move;
   damageDeal: number;
-  resultPokemon1: Pokemon;
-  resultPokemon2: Pokemon;
+  damageEffectiveness: DamageEffectiveness;
+  resultPokemonList: [Pokemon, Pokemon];
 }
 
 export interface BattleResult {
@@ -21,3 +21,5 @@ export const isDamageMove = (
   (move.damage_class?.name as MoveClass) !== "status";
 
 export type MoveClass = DamageClass | "status";
+
+export type DamageEffectiveness = "immune" | "not-very" | "normal" | "very";

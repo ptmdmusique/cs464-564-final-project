@@ -1,0 +1,30 @@
+.turn-history {
+  width: 100%;
+  opacity: 0;
+  animation: fade-in 0.2s ease-in-out forwards;
+}
+
+@media (min-width: 768px) {
+  .turn-history {
+    width: calc(50% - 1.5rem);
+  }
+}
+
+@media (min-width: 992px) {
+  .turn-history {
+    width: calc(33% - 1.5rem);
+  }
+}
+
+.text-warning {
+  color: #a16207;
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
