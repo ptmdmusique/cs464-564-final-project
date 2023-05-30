@@ -7,3 +7,7 @@ const MAX_POKEMON_ID = 1000;
 const api = new PokemonClient();
 export const getRandomPokemon = () =>
   api.getPokemonById(getRandomNumber(MIN_POKEMON_ID, MAX_POKEMON_ID));
+
+export const getPokemonByName = (name:string) =>
+  api.getPokemonByName(name);
+
