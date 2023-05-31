@@ -77,9 +77,10 @@ const PokemonCard = ({ pokemon }: { pokemon: Pokemon }) => {
         alt={capitalizedName}
         width={200}
         height={200}
-        className="w-100"
+        className="w-100 h-auto"
         // ! Bootstrap 5.2.3 doesn't support object-fit-contain
         style={{ objectFit: "contain" }}
+        priority
       />
 
       <p className="h6 mt-1">{capitalizedName}</p>

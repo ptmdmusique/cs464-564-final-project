@@ -7,9 +7,10 @@ import { BattleResult } from "@/data/battle";
 import { usePokemonSpecies } from "@/hook/useAllPokemonNameList";
 import { useQueryParams } from "@/hook/useQueryParams";
 import { battle } from "@/utils/battle";
+import { getRandomNumber } from "@/utils/functional";
 import { getPokemonById, getRandomPokemonId } from "@/utils/pokemon";
 import { Pokemon } from "pokenode-ts";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Button,
   Col,
@@ -88,7 +89,7 @@ export default function PokemonBattleView({
     const id1Changed = battlePokemonList?.[0].id !== newId1;
     const id2Changed = battlePokemonList?.[1].id !== newId2;
 
-    if (!id1Changed && !id2Changed) {
+    if ((!id1Changed && !id2Changed) || isLoading) {
       return;
     }
 
@@ -104,7 +105,7 @@ export default function PokemonBattleView({
       .finally(() => {
         setIsLoading(null);
       });
-  }, [queryParams, battlePokemonList]);
+  }, [queryParams, battlePokemonList, isLoading]);
 
   // * Search bar related stuff
   const { isLoading: isFetchingAllPokemonNames } = usePokemonSpecies();
@@ -192,12 +193,15 @@ export default function PokemonBattleView({
           placement="bottom"
           overlay={<Tooltip>Pokemons will choose all moves randomly!</Tooltip>}
         >
-          <Form.Check
-            type="switch"
-            label="Frenzy Mode 🔥"
-            className="mt-2"
-            onChange={(e) => setIsFrenzyMode(e.target.checked)}
-          />
+          <Form.Group className="mt-2">
+            <Form.Label className="d-flex mb-0">
+              <Form.Check
+                type="switch"
+                onChange={(e) => setIsFrenzyMode(e.target.checked)}
+              />
+              Frenzy Mode 🔥
+            </Form.Label>
+          </Form.Group>
         </OverlayTrigger>
       </Col>
 
@@ -234,16 +238,13 @@ const PokemonCard = ({
             customCardTitle={
               <Row className="gx-0 mb-5">
                 <Col md={9} lg={7} xl={9}>
-                  <Form.Group>
-                    <Form.Label className="h6 mb-0">Pokemon</Form.Label>
-                    <PokemonSearchBar
-                      selectedName={pokemon.name}
-                      onSelected={(_, id) => {
-                        onIdChange(id);
-                      }}
-                      disabled={isLoading || isBattling}
-                    />
-                  </Form.Group>
+                  <PokemonSearchBar
+                    selectedName={pokemon.name}
+                    onSelected={(_, id) => {
+                      onIdChange(id);
+                    }}
+                    disabled={isLoading || isBattling}
+                  />
                 </Col>
 
                 <Col className="mt-2 mt-md-0 ms-md-2 d-flex">

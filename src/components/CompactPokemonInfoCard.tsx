@@ -94,15 +94,18 @@ const PokemonInfoCard = ({
 
   return (
     <>
-      <Row className="d-flex align-items-center justify-content-center position-relative">
-        <Image
-          src={sprites.other?.["official-artwork"].front_default ?? ""}
-          alt={capitalizedName}
-          width={IMAGE_SIZE}
-          height={IMAGE_SIZE}
-          style={{ width: IMAGE_SIZE, height: IMAGE_SIZE }}
-          className={fainted ? style["fainted-img"] : undefined}
-        />
+      <Row className="position-relative">
+        <div className="d-flex align-items-center justify-content-center">
+          <Image
+            src={sprites.other?.["official-artwork"].front_default ?? ""}
+            alt={capitalizedName}
+            width={IMAGE_SIZE}
+            height={IMAGE_SIZE}
+            style={{ width: IMAGE_SIZE, height: IMAGE_SIZE }}
+            className={fainted ? style["fainted-img"] : undefined}
+            priority
+          />
+        </div>
 
         {fainted && (
           <div
