@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Pokemon } from "pokenode-ts";
 import { useEffect, useState } from "react";
-import { Button, Card, Col, Row } from "react-bootstrap";
+import { Card, Col, Row } from "react-bootstrap";
 import { LoadingSpinner } from "./LoadingSpinner";
 
 export const CompactBattleCard = () => {
@@ -25,7 +25,7 @@ export const CompactBattleCard = () => {
   return (
     <Card className="shadow-sm">
       <Card.Body>
-        <Card.Title className="text-center">Battle Simulation!</Card.Title>
+        <Card.Title className="text-center">Battle Simulator!</Card.Title>
 
         <div>
           <Row className="gx-0">
@@ -73,13 +73,14 @@ const PokemonCard = ({ pokemon }: { pokemon: Pokemon }) => {
   return (
     <Col xs={12} md={5} className="text-center">
       <Image
-        src={sprites.front_default ?? ""}
+        src={sprites.other?.["official-artwork"].front_default ?? ""}
         alt={capitalizedName}
         width={200}
         height={200}
-        className="w-100"
+        className="w-100 h-auto"
         // ! Bootstrap 5.2.3 doesn't support object-fit-contain
         style={{ objectFit: "contain" }}
+        priority
       />
 
       <p className="h6 mt-1">{capitalizedName}</p>
