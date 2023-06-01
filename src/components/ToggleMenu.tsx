@@ -18,12 +18,11 @@ export const ToggleMenu = ({ handleSwitch }: ToggleMenuProps) => {
     'galar',
     'paldea',
   ];
-  const settings = ['lbs'];
 
   return (
     <div className="regions-container border rounded w-50 mx-auto mb-4 mt-3">
       <Form className="p-3">
-        <h4 className="text-center">Regions</h4>
+        <h3 className="text-center">Regions</h3>
         <div className="regions">
           {regions.map((region) => (
             <Form.Check

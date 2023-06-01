@@ -54,7 +54,7 @@ export const getPokemonData = (pokemonList: Pokemon[], pokemonIDs: number[]) => 
   return result;
 };
 
-// Weight Charts
+//Next 3 methods are used to filter/sort data for the weight charts
 export const getHeaviest = (pokemonList: Pokemon[]) => {
   const sorted = pokemonList.sort((a, b) => (a.weight > b.weight ? -1 : 1)).slice(0, 10);
   return getWeightData(sorted);
@@ -81,7 +81,7 @@ const getWeightData = (sorted: Pokemon[]) => {
   };
 };
 
-// Height Charts
+//Next 3 methods are used to filter/sort data for the height charts
 export const getTallest = (pokemonList: Pokemon[]) => {
   const sorted = pokemonList.sort((a, b) => (a.height > b.height ? -1 : 1)).slice(0, 10);
   return getHeightData(sorted);
@@ -108,7 +108,7 @@ const getHeightData = (sorted: Pokemon[]) => {
   };
 };
 
-// Speed Charts
+//Next 3 methods are used to filter/sort data for the speed charts
 export const getFastest = (pokemonList: Pokemon[]) => {
   const sorted = pokemonList
     .sort((a, b) => (a.stats[5].base_stat > b.stats[5].base_stat ? -1 : 1))
@@ -130,7 +130,6 @@ const getSpeedData = (sorted: Pokemon[]) => {
   sorted.forEach((pokemon) => sortedData.push(pokemon.stats[5].base_stat));
   sorted.forEach((pokemon) => sortedLabels.push(pokemon.name));
   sorted.forEach((pokemon) => id.push(pokemon.id));
-  // sortedData = sortedData.map((x) => (x / 10) * 3.28084);
 
   return {
     id: id,
@@ -139,7 +138,7 @@ const getSpeedData = (sorted: Pokemon[]) => {
   };
 };
 
-//Shape Chart
+//Filter/Sort Data for body shape chart
 export const getShape = (shapeList: PokemonShape[]) => {
   let labels: string[] = [];
   let data: number[] = [];
@@ -150,6 +149,7 @@ export const getShape = (shapeList: PokemonShape[]) => {
   return { id: id, data: data, labels: labels };
 };
 
+//Used for doughnut charts to generate random colors for the cell background and borders
 export const getRandomColors = (numOfItems: number) => {
   let backgroundColors: string[] = [];
   let borderColors: string[] = [];
