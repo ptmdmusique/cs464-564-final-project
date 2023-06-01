@@ -23,6 +23,7 @@
     "react": "18.2.0",
     "react-bootstrap": "^2.7.4",
     "react-chartjs-2": "^5.2.0",
+    "react-bootstrap-typeahead": "^6.2.2",
     "react-dom": "18.2.0",
     "typescript": "5.0.4"
   }

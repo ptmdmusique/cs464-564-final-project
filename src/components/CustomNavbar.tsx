@@ -1,8 +1,8 @@
 "use client";
 
+import { PossibleRoute } from "@/data/route";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ComponentProps } from "react";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
@@ -34,7 +34,6 @@ export const CustomNavbar = () => {
   );
 };
 
-type PossibleRoute = ComponentProps<typeof Link>["href"];
 const routeList = [
   { route: "/", displayName: "Home" },
   { route: "/pokedex", displayName: "Pokédex" },
