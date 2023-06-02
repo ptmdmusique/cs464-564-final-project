@@ -4,19 +4,12 @@ import Container from 'react-bootstrap/Container';
 import ListGroup from 'react-bootstrap/ListGroup';
 import { useState } from 'react';
 import { Button } from 'react-bootstrap';
+import { chartType } from '@/data/chart-type';
 
-const menuItems = [
-  { title: 'Top 10 Heaviest', chartName: 'Heaviest' },
-  { title: 'Top 10 Lightest', chartName: 'Lightest' },
-  { title: 'Top 10 Tallest', chartName: 'Tallest' },
-  { title: 'Top 10 Shortest', chartName: 'Shortest' },
-  { title: 'Top 10 Fastest', chartName: 'Fastest' },
-  { title: 'Top 10 Slowest', chartName: 'Slowest' },
-  { title: 'Body Shape Types', chartName: 'Shape' },
-];
+type ChartType = (typeof chartType)[number];
 
 interface StatsMenuProps {
-  handleClick: (stat: string) => void;
+  handleClick: (stat: ChartType) => void;
 }
 export const StatsMenu = ({ handleClick }: StatsMenuProps) => {
   const [selected, setSelected] = useState(0);
@@ -25,12 +18,8 @@ export const StatsMenu = ({ handleClick }: StatsMenuProps) => {
     <aside>
       <Container>
         <ListGroup>
-          {menuItems.map((chart, index) => (
-            <ListGroup.Item
-              as="li"
-              key={chart.title}
-              className={selected === index ? 'active' : ''}
-            >
+          {Object.keys(chartType).map((chart, index) => (
+            <ListGroup.Item as="li" key={index} className={selected === index ? 'active' : ''}>
               <Button
                 className={
                   selected === index
@@ -39,10 +28,10 @@ export const StatsMenu = ({ handleClick }: StatsMenuProps) => {
                 }
                 onClick={() => {
                   setSelected(index);
-                  handleClick(chart.chartName);
+                  handleClick(chartType[chart]);
                 }}
               >
-                {chart.title}
+                {chartType[chart].title}
               </Button>
             </ListGroup.Item>
           ))}

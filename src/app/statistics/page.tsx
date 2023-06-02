@@ -7,6 +7,7 @@ import {
   getPokemonById,
 } from '@/utils/pokemon';
 import { regionList } from '@/data/region';
+import { chartType } from '@/data/chart-type';
 import { BarChart } from '@/components/BarChart';
 import { DoughnutChart } from '@/components/DoughnutChart';
 import React, { useEffect, useState } from 'react';
@@ -36,11 +37,12 @@ export interface DoughnutData {
 }
 
 const StatisticsPage = () => {
+  type ChartType = (typeof chartType)[number];
   type Region = (typeof regionList)[number];
   type RegionToggle = Record<Region, boolean>;
   const [pokemonList, setPokemonList] = useState<Pokemon[]>([]);
   const [pokemonShapes, setPokemonShapes] = useState<PokemonShape[]>([]);
-  const [chartType, setChartType] = useState<string>('Heaviest');
+  const [currentChart, setCurrentChart] = useState<ChartType>(chartType['Heaviest']);
   const [doughnutData, setDoughnutData] = useState<DoughnutData[]>([]);
   const [bodyType, setBodyType] = useState<string>('');
   const [filterRegion, setFilterRegion] = useState<RegionToggle>(
@@ -109,112 +111,68 @@ const StatisticsPage = () => {
   };
 
   //Update the current chart on display based on side menu click
-  const handleStatsMenuClick = (stat: string) => {
-    setChartType(stat);
+  const handleStatsMenuClick = (stat: ChartType) => {
+    setCurrentChart(stat);
   };
 
   //Render the correct chart based on menu Click
   const renderChartComponent = () => {
-    switch (chartType) {
+    let data = getHeaviest(filterByRegion(pokemonList));
+    switch (currentChart.tag) {
       case 'Heaviest': {
-        const data = getHeaviest(filterByRegion(pokemonList));
-        return (
-          <>
-            <BarChart
-              dataset={data}
-              title={'Top 10 Heaviest Pokemon'}
-              label={'Weight'}
-              units={'lb'}
-            />
-            <ToggleMenu handleSwitch={handleSwitch} />
-          </>
-        );
+        data = getHeaviest(filterByRegion(pokemonList));
+        break;
       }
       case 'Lightest': {
-        const data = getLightest(filterByRegion(pokemonList));
-        return (
-          <>
-            <BarChart
-              dataset={data}
-              title={'Top 10 Lightest Pokemon'}
-              label={'Weight'}
-              units={'lb'}
-            />
-            <ToggleMenu handleSwitch={handleSwitch} />
-          </>
-        );
+        data = getLightest(filterByRegion(pokemonList));
+        break;
       }
       case 'Tallest': {
-        const data = getTallest(filterByRegion(pokemonList));
-        return (
-          <>
-            <BarChart
-              dataset={data}
-              title={'Top 10 Tallest Pokemon'}
-              label={'Height'}
-              units={'ft'}
-            />
-            <ToggleMenu handleSwitch={handleSwitch} />
-          </>
-        );
+        data = getTallest(filterByRegion(pokemonList));
+        break;
       }
       case 'Shortest': {
-        const data = getShortest(filterByRegion(pokemonList));
-        return (
-          <>
-            <BarChart
-              dataset={data}
-              title={'Top 10 Shortest Pokemon'}
-              label={'Height'}
-              units={'ft'}
-            />
-            <ToggleMenu handleSwitch={handleSwitch} />
-          </>
-        );
+        data = getShortest(filterByRegion(pokemonList));
+        break;
       }
       case 'Fastest': {
-        const data = getFastest(filterByRegion(pokemonList));
-        return (
-          <>
-            <BarChart
-              dataset={data}
-              title={'Top 10 Fastest Pokemon'}
-              label={'Speed'}
-              units={'pts'}
-            />
-            <ToggleMenu handleSwitch={handleSwitch} />
-          </>
-        );
+        data = getFastest(filterByRegion(pokemonList));
+        break;
       }
       case 'Slowest': {
-        const data = getSlowest(filterByRegion(pokemonList));
-        return (
-          <>
-            <BarChart
-              dataset={data}
-              title={'Top 10 Slowest Pokemon'}
-              label={'Speed'}
-              units={'pts'}
-            />
-            <ToggleMenu handleSwitch={handleSwitch} />
-          </>
-        );
+        data = getSlowest(filterByRegion(pokemonList));
+        break;
       }
       case 'Shape': {
-        const data = getShape(pokemonShapes);
-        return (
-          <>
-            <DoughnutChart
-              dataset={data}
-              title={'Pokemon by Body Shape'}
-              label={'Body Shape'}
-              handleClick={handleDoughnutChartClick}
-            />
-            <BodyShape bodyType={bodyType} />
-            <PokemonTable data={doughnutData} />
-          </>
-        );
+        data = getShape(pokemonShapes);
+        break;
       }
+    }
+    if (currentChart.type === 'bar') {
+      return (
+        <>
+          <BarChart
+            dataset={data}
+            title={currentChart.title}
+            label={currentChart.label}
+            units={currentChart.units}
+          />
+          <ToggleMenu handleSwitch={handleSwitch} />
+        </>
+      );
+    } else if (currentChart.type === 'Doughnut') {
+      return (
+        <>
+          <DoughnutChart
+            dataset={data}
+            title={currentChart.title}
+            label={currentChart.label}
+            handleClick={handleDoughnutChartClick}
+          />
+          <BodyShape bodyType={bodyType} />
+          <PokemonTable data={doughnutData} />
+        </>
+      );
     }
   };
 
