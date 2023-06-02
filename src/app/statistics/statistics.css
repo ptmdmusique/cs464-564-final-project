@@ -5,25 +5,21 @@ canvas {
   position: relative;
   height: 60vh;
 }
-.regions-container {
-  max-width: 400px;
-  min-width: 340px;
-}
-.regions {
-  display: flex;
-  flex-flow: column wrap;
-  max-height: 100px;
+.region {
+  width: 90px;
 }
 
 .pokemon-table {
-  max-width: 400px;
-}
-
-.pokemon-table-img {
-  width: 70px;
-  height: auto;
+  max-width: 600px;
 }
 
 .shape-outline {
-  max-width: 800px;
+  max-width: 600px;
+}
+
+.menu-btn {
+  border-color: transparent;
+}
+.menu-btn:hover {
+  border-color: transparent;
 }

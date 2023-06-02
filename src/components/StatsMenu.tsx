@@ -3,6 +3,7 @@
 import Container from 'react-bootstrap/Container';
 import ListGroup from 'react-bootstrap/ListGroup';
 import { useState } from 'react';
+import { Button } from 'react-bootstrap';
 
 const menuItems = [
   { title: 'Top 10 Heaviest', chartName: 'Heaviest' },
@@ -28,13 +29,21 @@ export const StatsMenu = ({ handleClick }: StatsMenuProps) => {
             <ListGroup.Item
               as="li"
               key={chart.title}
-              onClick={() => {
-                setSelected(index);
-                handleClick(chart.chartName);
-              }}
               className={selected === index ? 'active' : ''}
             >
-              {chart.title}
+              <Button
+                className={
+                  selected === index
+                    ? 'text-white bg-transparent text-dark w-100 menu-btn'
+                    : 'bg-transparent text-dark w-100 menu-btn'
+                }
+                onClick={() => {
+                  setSelected(index);
+                  handleClick(chart.chartName);
+                }}
+              >
+                {chart.title}
+              </Button>
             </ListGroup.Item>
           ))}
         </ListGroup>

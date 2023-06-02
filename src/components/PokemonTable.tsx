@@ -3,7 +3,11 @@ import Table from 'react-bootstrap/Table';
 import { DoughnutData } from '@/app/statistics/page';
 import 'src/app/statistics/statistics.css';
 import { Col, Row } from 'react-bootstrap';
+import Link from 'next/link';
+import Image from 'next/image';
+import { bodyShapes } from '@/data/body-type';
 
+type BodyType = keyof typeof bodyShapes;
 interface PokemonTableProps {
   data: DoughnutData[];
 }
@@ -23,31 +27,15 @@ export const PokemonTable = ({ data }: PokemonTableProps) => {
       <tbody>
         {data.map((item) => (
           <tr key={item.id}>
-            <td
-              className="text-center"
-              onClick={() =>
-                (window.location.href = `http://localhost:3000//pokedex?pokemon=${item.id}`)
-              }
-            >
-              {item.id}
-            </td>
+            <td className="text-center">{item.id}</td>
             <td>
-              <img
-                src={item.sprite ?? ''}
-                alt="Pokemon sprite"
-                className="pokemon-table-img"
-                onClick={() =>
-                  (window.location.href = `http://localhost:3000//pokedex?pokemon=${item.id}`)
-                }
-              />
+              <Image src={item.sprite ?? ''} alt="Pokemon sprite" width={90} height={90} />
             </td>
-            <td
-              className="text-center"
-              onClick={() =>
-                (window.location.href = `http://localhost:3000//pokedex?pokemon=${item.id}`)
-              }
-            >
-              {item.name}
+            <td className="text-center">{item.name}</td>
+            <td>
+              <Link href={`/pokedex?pokemon=${item.id}`} className="btn btn-outline-primary">
+                Find out more
+              </Link>
             </td>
           </tr>
         ))}
@@ -56,57 +44,20 @@ export const PokemonTable = ({ data }: PokemonTableProps) => {
   );
 };
 interface BodyShapeProps {
-  bodyType: string;
+  bodyType: BodyType;
 }
 export const BodyShape = ({ bodyType }: BodyShapeProps) => {
-  const shapeUrl = {
-    ball: '../images/ball.png',
-    squiggle: '../images/squiggle.png',
-    fish: '../images/fish.png',
-    arms: '../images/arms.png',
-    blob: '../images/blob.png',
-    upright: '../images/upright.png',
-    legs: '../images/legs.png',
-    quadruped: '../images/quadruped.png',
-    wings: '../images/wings.png',
-    tentacles: '../images/tentacles.png',
-    heads: '../images/heads.png',
-    humanoid: '../images/humanoid.png',
-    'bug-wings': '../images/bug-wings.png',
-    armor: '../images/armor.png',
-  };
-  const shapeDescriptions = {
-    ball: 'Pokemon consisting of only a head',
-    squiggle: 'Pokemon with a serpentine body',
-    fish: 'Pokemon with fins',
-    arms: 'Pokemon consisting of a head and arms',
-    blob: 'Pokemon consisiting of a head and a base',
-    upright: 'Pokemon with a bipedal, tailed form',
-    legs: 'Pokemon consisting of a head and legs',
-    quadruped: 'Pokemon with a quadruped body',
-    wings: 'Pokemon with a single pair of wings',
-    tentacles: 'Pokemon with tentacles or a multiped body',
-    heads: 'Pokemon consisting of multiple bodies',
-    humanoid: 'Pokemon with a bipedal, tailless form',
-    'bug-wings': 'Pokemon with two or more pairs of wings',
-    armor: 'Pokemon with an insectoid body',
-  };
-
   if (bodyType === '') {
     return null;
   }
 
   return (
-    <Row className="shape-outline w-50 mx-auto p-4">
+    <Row className="shape-outline mx-auto p-4">
       <Col xs={12} md={3}>
-        <img
-          src={shapeUrl[bodyType as keyof typeof shapeUrl]}
-          alt="Shape outline"
-          className="outline-img"
-        ></img>
+        <Image src={bodyShapes[bodyType].imagePath} alt="Shape outline" width={120} height={120} />
       </Col>
-      <Col xs={12} md={9} className="m-auto ps-5">
-        <p className="fw-bold">{shapeDescriptions[bodyType as keyof typeof shapeDescriptions]}</p>
+      <Col xs={12} md={9} className="m-auto ps-5 justify-content-end">
+        <p className="fw-bold">{bodyShapes[bodyType].description}</p>
       </Col>
     </Row>
   );
