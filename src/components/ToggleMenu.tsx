@@ -10,9 +10,9 @@ interface ToggleMenuProps {
 
 export const ToggleMenu = ({ handleSwitch }: ToggleMenuProps) => {
   return (
-    <div className="border rounded w-75 mx-auto mb-4 mt-3">
+    <div className="border rounded mx-auto mb-4 mt-5 p-2">
       <h3 className="text-center">Regions</h3>
-      <Form className="d-flex flex-wrap ustify-content-evenly p-3">
+      <Form className="d-flex flex-wrap justify-content-start p-3 ms-4">
         {regionList.map((region) => (
           <Form.Check
             type="switch"

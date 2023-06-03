@@ -1,13 +1,15 @@
-"use client";
-import { BarChart } from "@/components/BarChart";
-import { DoughnutChart } from "@/components/DoughnutChart";
-import { BodyShape, PokemonTable } from "@/components/PokemonTable";
-import { StatsMenu } from "@/components/StatsMenu";
-import { ToggleMenu } from "@/components/ToggleMenu";
-import { chartType } from "@/data/chart-type";
-import { regionList } from "@/data/region";
-import { getPokemonData, sortById } from "@/utils/functional";
-import { MAX_POKEMON_ID, getPokemonById } from "@/utils/pokemon";
+'use client';
+import { BarChart } from '@/components/BarChart';
+import { DoughnutChart } from '@/components/DoughnutChart';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
+import { PageLayout } from '@/components/PageLayout';
+import { BodyShape, PokemonTable } from '@/components/PokemonTable';
+import { StatsMenu } from '@/components/StatsMenu';
+import { ToggleMenu } from '@/components/ToggleMenu';
+import { chartType, ChartType } from '@/data/chart-type';
+import { regionList } from '@/data/region';
+import { getPokemonData, sortById } from '@/utils/functional';
+import { MAX_POKEMON_ID, MAX_SHAPES, getPokemonById, getPokemonShapes } from '@/utils/pokemon';
 import {
   getFastest,
   getHeaviest,
@@ -16,12 +18,12 @@ import {
   getShortest,
   getSlowest,
   getTallest,
-} from "@/utils/pokemon-stat";
-import { getPokemonFromRegion } from "@/utils/region";
-import { Pokemon, PokemonShape } from "pokenode-ts";
-import React, { useEffect, useState } from "react";
-import { Col, Row } from "react-bootstrap";
-import "src/app/statistics/statistics.css";
+} from '@/utils/pokemon-stat';
+import { getPokemonFromRegion } from '@/utils/region';
+import { Pokemon, PokemonShape } from 'pokenode-ts';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Col, Row } from 'react-bootstrap';
+import 'src/app/statistics/statistics.css';
 
 export interface DoughnutData {
   id: number;
@@ -30,21 +32,18 @@ export interface DoughnutData {
 }
 
 const StatisticsPage = () => {
-  type ChartType = (typeof chartType)[number];
   type Region = (typeof regionList)[number];
   type RegionToggle = Record<Region, boolean>;
   const [pokemonList, setPokemonList] = useState<Pokemon[]>([]);
   const [pokemonShapes, setPokemonShapes] = useState<PokemonShape[]>([]);
-  const [currentChart, setCurrentChart] = useState<ChartType>(
-    chartType["Heaviest"],
-  );
+  const [currentChart, setCurrentChart] = useState<ChartType>(chartType['heaviest']);
   const [doughnutData, setDoughnutData] = useState<DoughnutData[]>([]);
-  const [bodyType, setBodyType] = useState<string>("");
+  const [bodyType, setBodyType] = useState<string>('');
   const [filterRegion, setFilterRegion] = useState<RegionToggle>(
     regionList.reduce<RegionToggle>((accumulator, current) => {
       accumulator[current] = false;
       return accumulator;
-    }, {} as RegionToggle),
+    }, {} as RegionToggle)
   );
 
   useEffect(() => {
@@ -54,6 +53,12 @@ const StatisticsPage = () => {
     }
 
     Promise.all(promises).then(setPokemonList);
+
+    for (let i = 1; i <= MAX_SHAPES; i++) {
+      getPokemonShapes(i).then((res) => {
+        setPokemonShapes((pokemonShapes) => [...pokemonShapes, res]);
+      });
+    }
   }, []);
 
   //Update region switch state
@@ -69,10 +74,7 @@ const StatisticsPage = () => {
       if (filterRegion[region as keyof typeof filterRegion]) {
         filteredPokemonList = [
           ...filteredPokemonList,
-          ...getPokemonFromRegion(
-            pokemonList,
-            region as keyof typeof filterRegion,
-          ),
+          ...getPokemonFromRegion(pokemonList, region as keyof typeof filterRegion),
         ];
       }
     }
@@ -82,7 +84,6 @@ const StatisticsPage = () => {
   };
 
   const handleDoughnutChartClick = (index: number) => {
-    const sorted = sortById(pokemonList);
     setBodyType(pokemonShapes[index].name);
 
     //Get the IDs of all Pokemon with the clicked on shape
@@ -99,44 +100,48 @@ const StatisticsPage = () => {
     setCurrentChart(stat);
   };
 
-  //Render the correct chart based on menu Click
-  const renderChartComponent = () => {
+  const chartData = useMemo(() => {
     let data = getHeaviest(filterByRegion(pokemonList));
     switch (currentChart.tag) {
-      case "Heaviest": {
+      case 'heaviest': {
         data = getHeaviest(filterByRegion(pokemonList));
         break;
       }
-      case "Lightest": {
+      case 'lightest': {
         data = getLightest(filterByRegion(pokemonList));
         break;
       }
-      case "Tallest": {
+      case 'tallest': {
         data = getTallest(filterByRegion(pokemonList));
         break;
       }
-      case "Shortest": {
+      case 'shortest': {
         data = getShortest(filterByRegion(pokemonList));
         break;
       }
-      case "Fastest": {
+      case 'fastest': {
         data = getFastest(filterByRegion(pokemonList));
         break;
       }
-      case "Slowest": {
+      case 'slowest': {
         data = getSlowest(filterByRegion(pokemonList));
         break;
       }
-      case "Shape": {
+      case 'shape': {
         data = getShape(pokemonShapes);
         break;
       }
     }
-    if (currentChart.type === "bar") {
+    return data;
+  }, [currentChart.tag, pokemonList, pokemonShapes]);
+
+  //Render the correct chart based on menu Click
+  const renderChartComponent = () => {
+    if (currentChart.type === 'bar') {
       return (
         <>
           <BarChart
-            dataset={data}
+            dataset={chartData}
             title={currentChart.title}
             label={currentChart.label}
             units={currentChart.units}
@@ -144,34 +149,39 @@ const StatisticsPage = () => {
           <ToggleMenu handleSwitch={handleSwitch} />
         </>
       );
-    } else if (currentChart.type === "Doughnut") {
-      return (
-        <>
-          <DoughnutChart
-            dataset={data}
-            title={currentChart.title}
-            label={currentChart.label}
-            handleClick={handleDoughnutChartClick}
-          />
-          <BodyShape bodyType={bodyType} />
-          <PokemonTable data={doughnutData} />
-        </>
-      );
     }
+    return (
+      <>
+        <DoughnutChart
+          dataset={chartData}
+          title={currentChart.title}
+          label={currentChart.label}
+          handleClick={handleDoughnutChartClick}
+        />
+        <BodyShape bodyType={bodyType} />
+        <PokemonTable data={doughnutData} />
+      </>
+    );
   };
 
   return (
-    <main>
-      <Row className="my-4 mb-lg-0">
-        <Col xs={12} md={3}>
-          <StatsMenu handleClick={handleStatsMenuClick} />
+    <PageLayout>
+      {pokemonList.length !== 0 ? (
+        <Row className="my-4 mb-lg-0">
+          <Col xs={12} md={3} className="pt-3 pt-md-0">
+            <StatsMenu handleClick={handleStatsMenuClick} />
+          </Col>
+          <Col xs={12} md={9} className="ps-md-5 pt-5 pt-md-0">
+            <h1 className="text-center">Statistics Page</h1>
+            {renderChartComponent()}
+          </Col>
+        </Row>
+      ) : (
+        <Col>
+          <LoadingSpinner />
         </Col>
-        <Col xs={12} md={9} className="ps-5">
-          <h1 className="text-center">Statistics Page</h1>
-          {renderChartComponent()}
-        </Col>
-      </Row>
-    </main>
+      )}
+    </PageLayout>
   );
 };
 

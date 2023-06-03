@@ -4,9 +4,7 @@ import Container from 'react-bootstrap/Container';
 import ListGroup from 'react-bootstrap/ListGroup';
 import { useState } from 'react';
 import { Button } from 'react-bootstrap';
-import { chartType } from '@/data/chart-type';
-
-type ChartType = (typeof chartType)[number];
+import { chartType, ChartType, Tag } from '@/data/chart-type';
 
 interface StatsMenuProps {
   handleClick: (stat: ChartType) => void;
@@ -28,10 +26,10 @@ export const StatsMenu = ({ handleClick }: StatsMenuProps) => {
                 }
                 onClick={() => {
                   setSelected(index);
-                  handleClick(chartType[chart]);
+                  handleClick(chartType[chart as Tag]);
                 }}
               >
-                {chartType[chart].title}
+                {chartType[chart as Tag].title}
               </Button>
             </ListGroup.Item>
           ))}
