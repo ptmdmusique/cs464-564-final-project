@@ -1,6 +1,6 @@
 import { Pokemon } from 'pokenode-ts';
-import { regionList } from '@/data/region';
-type Region = (typeof regionList)[number];
+import { regionList, Region, RegionToggle } from '@/data/region';
+
 const regionToPokemonRange: Record<Region, [number, number]> = {
   kanto: [0, 150],
   johto: [151, 250],
@@ -16,4 +16,20 @@ const regionToPokemonRange: Record<Region, [number, number]> = {
 export const getPokemonFromRegion = (pokemonList: Pokemon[], region: Region) => {
   const range = regionToPokemonRange[region];
   return pokemonList.filter(({ id }) => id <= range[1] && id > range[0]);
+};
+
+//Filter data by region
+export const filterByRegion = (pokemonList: Pokemon[], filterRegion: RegionToggle) => {
+  let filteredPokemonList: Pokemon[] = [];
+  for (const region in filterRegion) {
+    if (filterRegion[region as keyof typeof filterRegion]) {
+      filteredPokemonList = [
+        ...filteredPokemonList,
+        ...getPokemonFromRegion(pokemonList, region as keyof typeof filterRegion),
+      ];
+    }
+  }
+
+  if (filteredPokemonList.length !== 0) return filteredPokemonList;
+  else return pokemonList;
 };

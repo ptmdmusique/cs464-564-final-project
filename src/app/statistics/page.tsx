@@ -7,8 +7,9 @@ import { BodyShape, PokemonTable } from '@/components/PokemonTable';
 import { StatsMenu } from '@/components/StatsMenu';
 import { ToggleMenu } from '@/components/ToggleMenu';
 import { chartType, ChartType } from '@/data/chart-type';
-import { regionList } from '@/data/region';
-import { getPokemonData, sortById } from '@/utils/functional';
+import { regionList, RegionToggle } from '@/data/region';
+import { filterByRegion } from '@/utils/region';
+import { getPokemonData } from '@/utils/functional';
 import { MAX_POKEMON_ID, MAX_SHAPES, getPokemonById, getPokemonShapes } from '@/utils/pokemon';
 import {
   getFastest,
@@ -19,7 +20,6 @@ import {
   getSlowest,
   getTallest,
 } from '@/utils/pokemon-stat';
-import { getPokemonFromRegion } from '@/utils/region';
 import { Pokemon, PokemonShape } from 'pokenode-ts';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Col, Row } from 'react-bootstrap';
@@ -32,8 +32,6 @@ export interface DoughnutData {
 }
 
 const StatisticsPage = () => {
-  type Region = (typeof regionList)[number];
-  type RegionToggle = Record<Region, boolean>;
   const [pokemonList, setPokemonList] = useState<Pokemon[]>([]);
   const [pokemonShapes, setPokemonShapes] = useState<PokemonShape[]>([]);
   const [currentChart, setCurrentChart] = useState<ChartType>(chartType['heaviest']);
@@ -67,21 +65,21 @@ const StatisticsPage = () => {
     setFilterRegion((prev) => ({ ...prev, [id]: checked }));
   };
 
-  //Filter data by region
-  const filterByRegion = (pokemonList: Pokemon[]) => {
-    let filteredPokemonList: Pokemon[] = [];
-    for (const region in filterRegion) {
-      if (filterRegion[region as keyof typeof filterRegion]) {
-        filteredPokemonList = [
-          ...filteredPokemonList,
-          ...getPokemonFromRegion(pokemonList, region as keyof typeof filterRegion),
-        ];
-      }
-    }
+  // //Filter data by region
+  // const filterByRegion = (pokemonList: Pokemon[]) => {
+  //   let filteredPokemonList: Pokemon[] = [];
+  //   for (const region in filterRegion) {
+  //     if (filterRegion[region as keyof typeof filterRegion]) {
+  //       filteredPokemonList = [
+  //         ...filteredPokemonList,
+  //         ...getPokemonFromRegion(pokemonList, region as keyof typeof filterRegion),
+  //       ];
+  //     }
+  //   }
 
-    if (filteredPokemonList.length !== 0) return filteredPokemonList;
-    else return pokemonList;
-  };
+  //   if (filteredPokemonList.length !== 0) return filteredPokemonList;
+  //   else return pokemonList;
+  // };
 
   const handleDoughnutChartClick = (index: number) => {
     setBodyType(pokemonShapes[index].name);
@@ -101,30 +99,30 @@ const StatisticsPage = () => {
   };
 
   const chartData = useMemo(() => {
-    let data = getHeaviest(filterByRegion(pokemonList));
+    let data = getHeaviest(filterByRegion(pokemonList, filterRegion));
     switch (currentChart.tag) {
       case 'heaviest': {
-        data = getHeaviest(filterByRegion(pokemonList));
+        data = getHeaviest(filterByRegion(pokemonList, filterRegion));
         break;
       }
       case 'lightest': {
-        data = getLightest(filterByRegion(pokemonList));
+        data = getLightest(filterByRegion(pokemonList, filterRegion));
         break;
       }
       case 'tallest': {
-        data = getTallest(filterByRegion(pokemonList));
+        data = getTallest(filterByRegion(pokemonList, filterRegion));
         break;
       }
       case 'shortest': {
-        data = getShortest(filterByRegion(pokemonList));
+        data = getShortest(filterByRegion(pokemonList, filterRegion));
         break;
       }
       case 'fastest': {
-        data = getFastest(filterByRegion(pokemonList));
+        data = getFastest(filterByRegion(pokemonList, filterRegion));
         break;
       }
       case 'slowest': {
-        data = getSlowest(filterByRegion(pokemonList));
+        data = getSlowest(filterByRegion(pokemonList, filterRegion));
         break;
       }
       case 'shape': {
@@ -133,7 +131,7 @@ const StatisticsPage = () => {
       }
     }
     return data;
-  }, [currentChart.tag, pokemonList, pokemonShapes]);
+  }, [currentChart.tag, pokemonList, pokemonShapes, filterRegion]);
 
   //Render the correct chart based on menu Click
   const renderChartComponent = () => {
