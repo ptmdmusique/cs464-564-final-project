@@ -1,35 +1,28 @@
-'use client';
-import 'src/app/statistics/statistics.css';
+"use client";
+import { BarChart } from "@/components/BarChart";
+import { DoughnutChart } from "@/components/DoughnutChart";
+import { BodyShape, PokemonTable } from "@/components/PokemonTable";
+import { StatsMenu } from "@/components/StatsMenu";
+import { ToggleMenu } from "@/components/ToggleMenu";
+import { chartType } from "@/data/chart-type";
+import { regionList } from "@/data/region";
+import { getPokemonData, sortById } from "@/utils/functional";
+import { MAX_POKEMON_ID, getPokemonById } from "@/utils/pokemon";
 import {
-  getPokemonShapes,
-  getAllPokemonList,
-  getPokemonByName,
-  getPokemonById,
-} from '@/utils/pokemon';
-import { regionList } from '@/data/region';
-import { chartType } from '@/data/chart-type';
-import { BarChart } from '@/components/BarChart';
-import { DoughnutChart } from '@/components/DoughnutChart';
-import React, { useEffect, useState } from 'react';
-import { Pokemon, PokemonShape, Region, Type } from 'pokenode-ts';
-import { StatsMenu } from '@/components/StatsMenu';
-import { Row, Col } from 'react-bootstrap';
-import { sortById, getPokemonData } from '@/utils/functional';
-import {
+  getFastest,
   getHeaviest,
   getLightest,
-  getTallest,
-  getShortest,
-  getFastest,
-  getSlowest,
   getShape,
-} from '@/utils/pokemon-stat';
-import { getPokemonFromRegion } from '@/utils/region';
-import { ToggleMenu } from '@/components/ToggleMenu';
-import { BodyShape, PokemonTable } from '@/components/PokemonTable';
+  getShortest,
+  getSlowest,
+  getTallest,
+} from "@/utils/pokemon-stat";
+import { getPokemonFromRegion } from "@/utils/region";
+import { Pokemon, PokemonShape } from "pokenode-ts";
+import React, { useEffect, useState } from "react";
+import { Col, Row } from "react-bootstrap";
+import "src/app/statistics/statistics.css";
 
-const MAX_POKEMON = 1010;
-const MAX_SHAPES = 14;
 export interface DoughnutData {
   id: number;
   name: string;
@@ -42,37 +35,25 @@ const StatisticsPage = () => {
   type RegionToggle = Record<Region, boolean>;
   const [pokemonList, setPokemonList] = useState<Pokemon[]>([]);
   const [pokemonShapes, setPokemonShapes] = useState<PokemonShape[]>([]);
-  const [currentChart, setCurrentChart] = useState<ChartType>(chartType['Heaviest']);
+  const [currentChart, setCurrentChart] = useState<ChartType>(
+    chartType["Heaviest"],
+  );
   const [doughnutData, setDoughnutData] = useState<DoughnutData[]>([]);
-  const [bodyType, setBodyType] = useState<string>('');
+  const [bodyType, setBodyType] = useState<string>("");
   const [filterRegion, setFilterRegion] = useState<RegionToggle>(
-    regionList.reduce<RegionToggle>((accum, current) => {
-      accum[current] = false;
-      return accum;
-    }, {} as RegionToggle)
+    regionList.reduce<RegionToggle>((accumulator, current) => {
+      accumulator[current] = false;
+      return accumulator;
+    }, {} as RegionToggle),
   );
 
   useEffect(() => {
-    console.log('API CALL');
-    // getAllPokemonList().then((res) => {
-    //   let results = res.results;
-    //   let promises = results.map((result) => {
-    //     return getPokemonByName(result.name);
-    //   });
-    //   Promise.all(promises).then((res) => {
-    //     setPokemonList(res);
-    //   });
-    // });
-    for (let i = 1; i <= MAX_POKEMON; i++) {
-      getPokemonById(i).then((res) => {
-        setPokemonList((pokemonList) => [...pokemonList, res]);
-      });
+    const promises: Promise<Pokemon>[] = [];
+    for (let i = 1; i <= MAX_POKEMON_ID; i++) {
+      promises.push(getPokemonById(i));
     }
-    for (let i = 1; i <= MAX_SHAPES; i++) {
-      getPokemonShapes(i).then((res) => {
-        setPokemonShapes((pokemonShapes) => [...pokemonShapes, res]);
-      });
-    }
+
+    Promise.all(promises).then(setPokemonList);
   }, []);
 
   //Update region switch state
@@ -88,7 +69,10 @@ const StatisticsPage = () => {
       if (filterRegion[region as keyof typeof filterRegion]) {
         filteredPokemonList = [
           ...filteredPokemonList,
-          ...getPokemonFromRegion(pokemonList, region as keyof typeof filterRegion),
+          ...getPokemonFromRegion(
+            pokemonList,
+            region as keyof typeof filterRegion,
+          ),
         ];
       }
     }
@@ -119,36 +103,36 @@ const StatisticsPage = () => {
   const renderChartComponent = () => {
     let data = getHeaviest(filterByRegion(pokemonList));
     switch (currentChart.tag) {
-      case 'Heaviest': {
+      case "Heaviest": {
         data = getHeaviest(filterByRegion(pokemonList));
         break;
       }
-      case 'Lightest': {
+      case "Lightest": {
         data = getLightest(filterByRegion(pokemonList));
         break;
       }
-      case 'Tallest': {
+      case "Tallest": {
         data = getTallest(filterByRegion(pokemonList));
         break;
       }
-      case 'Shortest': {
+      case "Shortest": {
         data = getShortest(filterByRegion(pokemonList));
         break;
       }
-      case 'Fastest': {
+      case "Fastest": {
         data = getFastest(filterByRegion(pokemonList));
         break;
       }
-      case 'Slowest': {
+      case "Slowest": {
         data = getSlowest(filterByRegion(pokemonList));
         break;
       }
-      case 'Shape': {
+      case "Shape": {
         data = getShape(pokemonShapes);
         break;
       }
     }
-    if (currentChart.type === 'bar') {
+    if (currentChart.type === "bar") {
       return (
         <>
           <BarChart
@@ -160,7 +144,7 @@ const StatisticsPage = () => {
           <ToggleMenu handleSwitch={handleSwitch} />
         </>
       );
-    } else if (currentChart.type === 'Doughnut') {
+    } else if (currentChart.type === "Doughnut") {
       return (
         <>
           <DoughnutChart
