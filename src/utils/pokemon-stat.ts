@@ -1,4 +1,5 @@
 import { Pokemon, PokemonShape } from 'pokenode-ts';
+import { capitalizeFirstLetter } from './functional';
 
 //Next 2 methods are used to filter/sort data for the weight charts
 export const getHeaviest = (pokemonList: Pokemon[]) => {
@@ -62,7 +63,7 @@ const getAttributeData = (sorted: Pokemon[], attribute: 'height' | 'weight' | 's
     }
 
     sortedData.push(stat);
-    sortedLabels.push(pokemon.name);
+    sortedLabels.push(capitalizeFirstLetter(pokemon.name));
     id.push(pokemon.id);
   });
 
@@ -80,7 +81,7 @@ export const getShape = (shapeList: PokemonShape[]) => {
   const id: number[] = [];
 
   shapeList.forEach((shapeType) => {
-    labels.push(shapeType.name);
+    labels.push(capitalizeFirstLetter(shapeType.name));
     data.push(shapeType.pokemon_species.length);
     id.push(shapeType.id);
   });

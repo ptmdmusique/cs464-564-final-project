@@ -1,7 +1,3 @@
-import { Pokemon, PokemonShape } from 'pokenode-ts';
-import { DoughnutData } from '@/app/statistics/page';
-import { json } from 'stream/consumers';
-
 export const getRandomNumber = (min: number, max: number) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
@@ -9,23 +5,6 @@ export const capitalizeFirstLetter = (str: string) => str.charAt(0).toUpperCase(
 
 export const getRandomArrayElement = <T>(array: T[]): T =>
   array[Math.floor(Math.random() * array.length)];
-
-//Sort pokemon by id
-export const sortById = (pokemonList: Pokemon[]) => {
-  return pokemonList.sort((a, b) => (a.id < b.id ? -1 : 1));
-};
-
-//Extract Pokemon ID, name, and sprite image based on pokemon ID
-export const getPokemonData = (pokemonList: Pokemon[], pokemonIDs: number[]) => {
-  let result: DoughnutData[] = [];
-  for (let i = 0; i < pokemonIDs.length; i++) {
-    let id = pokemonIDs[i];
-    let name = pokemonList[pokemonIDs[i] - 1].name;
-    let sprite = pokemonList[pokemonIDs[i] - 1].sprites.other?.['official-artwork'].front_default;
-    result.push({ id: id, name: name, sprite: sprite });
-  }
-  return result;
-};
 
 //Used for doughnut charts to generate random colors for the cell background and borders
 export const getRandomColors = (numOfItems: number) => {

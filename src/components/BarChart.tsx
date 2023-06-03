@@ -9,7 +9,10 @@ import {
   Title,
   Tooltip,
   Legend,
+  ChartOptions,
+  ChartData,
 } from 'chart.js';
+import { useRouter } from 'next/navigation';
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 interface BarChartProps {
@@ -19,8 +22,17 @@ interface BarChartProps {
   units: string;
 }
 
-export const BarChart = ({ dataset, title, label, units }: BarChartProps) => {
-  const data = {
+interface ChartProps {
+  options: ChartOptions<'bar'>;
+  data: ChartData<'bar'>;
+}
+
+export const BarChart = (
+  { dataset, title, label, units }: BarChartProps,
+  { options, data }: ChartProps
+) => {
+  const router = useRouter();
+  data = {
     labels: dataset.labels,
     datasets: [
       {
@@ -33,13 +45,11 @@ export const BarChart = ({ dataset, title, label, units }: BarChartProps) => {
     ],
   };
 
-  const options = {
+  options = {
     maintainAspectRatio: false,
-    onClick: (event: any, element: any, chart: any) => {
+    onClick: (event, element, chart) => {
       if (element.length > 0) {
-        window.location.href = `http://localhost:3000//pokedex?pokemon=${
-          dataset.id[element[0].index]
-        }`;
+        router.push(`/pokedex?pokemon=${dataset.id[element[0].index]}`);
       }
     },
     scales: {

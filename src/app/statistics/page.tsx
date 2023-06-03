@@ -9,7 +9,7 @@ import { ToggleMenu } from '@/components/ToggleMenu';
 import { chartType, ChartType } from '@/data/chart-type';
 import { regionList, RegionToggle } from '@/data/region';
 import { filterByRegion } from '@/utils/region';
-import { getPokemonData } from '@/utils/functional';
+import { getPokemonData } from '@/utils/pokemon';
 import { MAX_POKEMON_ID, MAX_SHAPES, getPokemonById, getPokemonShapes } from '@/utils/pokemon';
 import {
   getFastest,
@@ -64,22 +64,6 @@ const StatisticsPage = () => {
     const { id, checked } = event.target;
     setFilterRegion((prev) => ({ ...prev, [id]: checked }));
   };
-
-  // //Filter data by region
-  // const filterByRegion = (pokemonList: Pokemon[]) => {
-  //   let filteredPokemonList: Pokemon[] = [];
-  //   for (const region in filterRegion) {
-  //     if (filterRegion[region as keyof typeof filterRegion]) {
-  //       filteredPokemonList = [
-  //         ...filteredPokemonList,
-  //         ...getPokemonFromRegion(pokemonList, region as keyof typeof filterRegion),
-  //       ];
-  //     }
-  //   }
-
-  //   if (filteredPokemonList.length !== 0) return filteredPokemonList;
-  //   else return pokemonList;
-  // };
 
   const handleDoughnutChartClick = (index: number) => {
     setBodyType(pokemonShapes[index].name);
