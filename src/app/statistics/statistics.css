@@ -1,0 +1,22 @@
+canvas {
+  position: relative;
+  height: 60vh;
+}
+.region {
+  width: 90px;
+}
+
+.pokemon-table {
+  max-width: 600px;
+}
+
+.shape-outline {
+  max-width: 600px;
+}
+
+.menu-btn {
+  border-color: transparent;
+}
+.menu-btn:hover {
+  border-color: transparent;
+}
