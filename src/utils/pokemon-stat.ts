@@ -1,4 +1,4 @@
-import { Pokemon, PokemonShape } from 'pokenode-ts';
+import { Pokemon } from 'pokenode-ts';
 import { capitalizeFirstLetter } from './functional';
 import { DoughnutDataType } from '@/data/chart-type';
 
@@ -39,8 +39,35 @@ export const getSlowest = (pokemonList: Pokemon[]) => {
   return getBarAttributeData(sorted, 'speed');
 };
 
+//Next 2 methods are used to filter/sort data for the highest HP chart
+export const getHighestHP = (pokemonList: Pokemon[]) => {
+  const sorted = pokemonList
+    .sort((a, b) => (a.stats[0].base_stat > b.stats[0].base_stat ? -1 : 1))
+    .slice(0, 10);
+  return getBarAttributeData(sorted, 'hp');
+};
+
+//Next 2 methods are used to filter/sort data for the highest attack chart
+export const getHighestAttack = (pokemonList: Pokemon[]) => {
+  const sorted = pokemonList
+    .sort((a, b) => (a.stats[1].base_stat > b.stats[1].base_stat ? -1 : 1))
+    .slice(0, 10);
+  return getBarAttributeData(sorted, 'attack');
+};
+
+//Next 2 methods are used to filter/sort data for the highest defense chart
+export const getHighestDefense = (pokemonList: Pokemon[]) => {
+  const sorted = pokemonList
+    .sort((a, b) => (a.stats[2].base_stat > b.stats[2].base_stat ? -1 : 1))
+    .slice(0, 10);
+  return getBarAttributeData(sorted, 'defense');
+};
+
 //Extract the ids, stats, and labels for the sorted data
-const getBarAttributeData = (sorted: Pokemon[], attribute: 'height' | 'weight' | 'speed') => {
+const getBarAttributeData = (
+  sorted: Pokemon[],
+  attribute: 'height' | 'weight' | 'speed' | 'hp' | 'attack' | 'defense'
+) => {
   const sortedData: number[] = [];
   const sortedLabels: string[] = [];
   const id: number[] = [];
@@ -56,6 +83,15 @@ const getBarAttributeData = (sorted: Pokemon[], attribute: 'height' | 'weight' |
         break;
       case 'speed':
         stat = pokemon.stats[5].base_stat;
+        break;
+      case 'hp':
+        stat = pokemon.stats[0].base_stat;
+        break;
+      case 'attack':
+        stat = pokemon.stats[1].base_stat;
+        break;
+      case 'defense':
+        stat = pokemon.stats[2].base_stat;
         break;
       default:
         stat = pokemon[attribute];

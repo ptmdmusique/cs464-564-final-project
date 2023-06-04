@@ -29,6 +29,9 @@ import {
   getSlowest,
   getTallest,
   sortDoughnutData,
+  getHighestHP,
+  getHighestAttack,
+  getHighestDefense,
 } from '@/utils/pokemon-stat';
 import { Pokemon, PokemonColor, PokemonHabitat, PokemonShape } from 'pokenode-ts';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -143,6 +146,18 @@ const StatisticsPage = () => {
       }
       case 'slowest': {
         data = getSlowest(filterByRegion(pokemonList, filterRegion));
+        break;
+      }
+      case 'hp': {
+        data = getHighestHP(filterByRegion(pokemonList, filterRegion));
+        break;
+      }
+      case 'attack': {
+        data = getHighestAttack(filterByRegion(pokemonList, filterRegion));
+        break;
+      }
+      case 'defense': {
+        data = getHighestDefense(filterByRegion(pokemonList, filterRegion));
         break;
       }
       case 'shape': {

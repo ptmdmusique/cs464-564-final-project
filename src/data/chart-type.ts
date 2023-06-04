@@ -9,6 +9,9 @@ export type Tag =
   | 'tallest'
   | 'fastest'
   | 'slowest'
+  | 'hp'
+  | 'attack'
+  | 'defense'
   | 'shape'
   | 'color'
   | 'habitat';
@@ -47,6 +50,22 @@ export const chartType: Record<
   },
   fastest: { tag: 'fastest', title: 'Top 10 Fastest', label: 'Speed', units: 'pts', type: 'bar' },
   slowest: { tag: 'slowest', title: 'Top 10 Slowest', label: 'Speed', units: 'pts', type: 'bar' },
+  hp: { tag: 'hp', title: 'Top 10 Highest HP', label: 'HP', units: 'pts', type: 'bar' },
+  attack: {
+    tag: 'attack',
+    title: 'Top 10 Highest Attack',
+    label: 'Attack',
+    units: 'pts',
+    type: 'bar',
+  },
+  defense: {
+    tag: 'defense',
+    title: 'Top 10 Highest Defense',
+    label: 'Defense',
+    units: 'pts',
+    type: 'bar',
+  },
+
   shape: {
     tag: 'shape',
     title: 'Pokemon by Body Shape',
