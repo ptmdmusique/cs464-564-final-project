@@ -1,4 +1,4 @@
-import { ColorRGB } from '@/data/color-type';
+import { ColorRGB, labelColors } from '@/data/color-type';
 
 export const getRandomNumber = (min: number, max: number) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -27,10 +27,8 @@ export const getColors = (labels: string[]) => {
   let backgroundColors: string[] = [];
   let borderColors: string[] = [];
   for (let i = 0; i < labels.length; i++) {
-    backgroundColors.push(
-      `rgba(${ColorRGB[labels[i].toLowerCase() as keyof typeof ColorRGB]}, 0.7)`
-    );
-    borderColors.push(`rgba(${ColorRGB[labels[i].toLowerCase() as keyof typeof ColorRGB]}, 0.9)`);
+    backgroundColors.push(`rgba(${ColorRGB[labels[i].toLowerCase() as labelColors]}, 0.7)`);
+    borderColors.push(`rgba(${ColorRGB[labels[i].toLowerCase() as labelColors]}, 0.9)`);
   }
   return { backgroundColors: backgroundColors, borderColors: borderColors };
 };

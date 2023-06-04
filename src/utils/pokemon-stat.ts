@@ -94,8 +94,7 @@ const getBarAttributeData = (
         stat = pokemon.stats[2].base_stat;
         break;
       default:
-        stat = pokemon[attribute];
-        console.log('ERROR');
+        console.error('ERROR: Unexpected Attribute');
         break;
     }
 

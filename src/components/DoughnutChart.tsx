@@ -54,7 +54,7 @@ export const DoughnutChart = (
     <>
       <h2 className="text-center">{title}</h2>
       <div>
-        <Doughnut options={options} data={data} />
+        <Doughnut options={options} data={data} aria-label="doughnut chart" />
       </div>
     </>
   );

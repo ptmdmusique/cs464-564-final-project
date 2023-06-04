@@ -9,7 +9,7 @@ import { ToggleMenu } from '@/components/ToggleMenu';
 import { chartType, ChartType } from '@/data/chart-type';
 import { regionList, RegionToggle } from '@/data/region';
 import { filterByRegion } from '@/utils/region';
-import { getPokemonData, sortById } from '@/utils/pokemon';
+import { getPokemonData } from '@/utils/pokemon';
 import {
   MAX_POKEMON_ID,
   MAX_SHAPES,
@@ -60,12 +60,19 @@ const StatisticsPage = () => {
   );
 
   useEffect(() => {
-    const promises: Promise<Pokemon>[] = [];
-    for (let i = 1; i <= MAX_POKEMON_ID; i++) {
-      promises.push(getPokemonById(i));
-    }
+    // const promises: Promise<Pokemon>[] = [];
+    // for (let i = 1; i <= MAX_POKEMON_ID; i++) {
+    //   promises.push(getPokemonById(i));
+    // }
 
-    Promise.all(promises).then(setPokemonList);
+    // Promise.all(promises).then(setPokemonList);
+
+    //This works with 1010 pokemon without any loading issue except for the graph flickering.
+    for (let i = 1; i <= MAX_POKEMON_ID; i++) {
+      getPokemonById(i).then((res) => {
+        setPokemonList((pokemonList) => [...pokemonList, res]);
+      });
+    }
 
     for (let i = 1; i <= MAX_SHAPES; i++) {
       getPokemonShapes(i).then((res) => {
@@ -99,20 +106,20 @@ const StatisticsPage = () => {
   const handleDoughnutChartClick = (index: number) => {
     let pokemonIDs: number[] = [];
     switch (currentChart.tag) {
-      case 'shape': {
+      case 'shape':
         setBodyType(pokemonShapes[index].name);
         pokemonIDs = sortDoughnutData(index, pokemonShapes);
         break;
-      }
-      case 'color': {
+
+      case 'color':
         pokemonIDs = sortDoughnutData(index, pokemonColors);
         break;
-      }
-      case 'habitat': {
+
+      case 'habitat':
         pokemonIDs = sortDoughnutData(index, pokemonHabitats);
         break;
-      }
     }
+
     setDoughnutData(getPokemonData(pokemonList, pokemonIDs));
   };
 
@@ -124,54 +131,53 @@ const StatisticsPage = () => {
   const chartData = useMemo(() => {
     let data = getHeaviest(filterByRegion(pokemonList, filterRegion));
     switch (currentChart.tag) {
-      case 'heaviest': {
+      case 'heaviest':
         data = getHeaviest(filterByRegion(pokemonList, filterRegion));
         break;
-      }
-      case 'lightest': {
+
+      case 'lightest':
         data = getLightest(filterByRegion(pokemonList, filterRegion));
         break;
-      }
-      case 'tallest': {
+
+      case 'tallest':
         data = getTallest(filterByRegion(pokemonList, filterRegion));
         break;
-      }
-      case 'shortest': {
+
+      case 'shortest':
         data = getShortest(filterByRegion(pokemonList, filterRegion));
         break;
-      }
-      case 'fastest': {
+
+      case 'fastest':
         data = getFastest(filterByRegion(pokemonList, filterRegion));
         break;
-      }
-      case 'slowest': {
+
+      case 'slowest':
         data = getSlowest(filterByRegion(pokemonList, filterRegion));
         break;
-      }
-      case 'hp': {
+
+      case 'hp':
         data = getHighestHP(filterByRegion(pokemonList, filterRegion));
         break;
-      }
-      case 'attack': {
+
+      case 'attack':
         data = getHighestAttack(filterByRegion(pokemonList, filterRegion));
         break;
-      }
-      case 'defense': {
+
+      case 'defense':
         data = getHighestDefense(filterByRegion(pokemonList, filterRegion));
         break;
-      }
-      case 'shape': {
+
+      case 'shape':
         data = getDoughnutAttributeData(pokemonShapes);
         break;
-      }
-      case 'color': {
+
+      case 'color':
         data = getDoughnutAttributeData(pokemonColors);
         break;
-      }
-      case 'habitat': {
+
+      case 'habitat':
         data = getDoughnutAttributeData(pokemonHabitats);
         break;
-      }
     }
     return data;
   }, [currentChart.tag, pokemonList, pokemonShapes, filterRegion, pokemonColors, pokemonHabitats]);
@@ -199,7 +205,7 @@ const StatisticsPage = () => {
           label={currentChart.label}
           handleClick={handleDoughnutChartClick}
         />
-        {currentChart.tag === 'shape' ? <BodyShape bodyType={bodyType} /> : <></>}
+        {currentChart.tag === 'shape' && <BodyShape bodyType={bodyType} />}
         <PokemonTable data={doughnutData} />
       </>
     );

@@ -1,3 +1,15 @@
+export type labelColors =
+  | 'yellow'
+  | 'brown'
+  | 'green'
+  | 'gray'
+  | 'red'
+  | 'white'
+  | 'blue'
+  | 'black'
+  | 'pink'
+  | 'purple';
+
 export const ColorRGB = {
   yellow: '255, 255, 0',
   brown: '184, 115, 51',
