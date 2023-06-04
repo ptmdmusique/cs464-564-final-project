@@ -11,6 +11,7 @@ interface Props {
   selectedName?: string;
   isLoading?: boolean;
   disabled?: boolean;
+  battle: boolean;
 }
 
 export const PokemonSearchBar = ({
@@ -18,6 +19,7 @@ export const PokemonSearchBar = ({
   onSelected,
   disabled,
   isLoading,
+  battle
 }: Props) => {
   const idRef = useRef(getRandomNumber(0, 9999));
 
@@ -41,6 +43,12 @@ export const PokemonSearchBar = ({
     [allSpecies],
   );
 
+  let searchPlaceholder;
+  if (battle)
+    searchPlaceholder = "Choose a pokemon..."
+  else 
+    searchPlaceholder = "Search for a pokemon..."
+
   return (
     <Typeahead
       id={`pokemon-search-bar-${idRef.current.toString()}`}
@@ -55,7 +63,7 @@ export const PokemonSearchBar = ({
         }
       }}
       options={displayNameList}
-      placeholder="Choose a pokemon..."
+      placeholder={searchPlaceholder}
       selected={[capitalizeFirstLetter(searchParam)]}
       onInputChange={setSearchParam}
       renderInput={({
@@ -66,7 +74,7 @@ export const PokemonSearchBar = ({
       }) => {
         return (
           <Form.Label className="w-100 mb-0">
-            <p className="h6 mb-1">Pokemon</p>
+            {battle && <p className="h6 mb-1">Pokemon</p>}
             <Form.Control
               {...inputProps}
               value={value as string[]}

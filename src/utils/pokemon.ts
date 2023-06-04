@@ -21,3 +21,6 @@ export const getMoveByName = (name: string) =>
 
 export const getAllPokemonList = () =>
   pokemonClient.listPokemonSpecies(0, MAX_POKEMON_ID);
+
+export const getAbility = (name: string) =>
+  pokemonClient.getAbilityByName(name);
