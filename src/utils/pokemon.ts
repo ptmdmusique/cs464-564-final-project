@@ -4,7 +4,7 @@ import { fromCache } from './cache.';
 import { capitalizeFirstLetter, getRandomNumber } from './functional';
 
 const MIN_POKEMON_ID = 1;
-export const MAX_POKEMON_ID = 1010; // The max is 1010 but we should be nice to the API...
+export const MAX_POKEMON_ID = 100; // The max is 1010 but we should be nice to the API...
 export const MAX_SHAPES = 14;
 export const MAX_COLORS = 10;
 export const MAX_HABITATS = 9;
@@ -39,13 +39,12 @@ export const sortById = (pokemonList: Pokemon[]) => {
 };
 
 //Extract Pokemon ID, name, and sprite image based on pokemon ID
-export const getPokemonData = (pokemonList: Pokemon[], pokemonIDs: number[]) => {
-  const sorted = sortById(pokemonList);
+export const getPokemonData = (pokemonList: Pokemon[]) => {
   const result: DoughnutData[] = [];
-  for (let i = 0; i < pokemonIDs.length; i++) {
-    const id = pokemonIDs[i];
-    const name = capitalizeFirstLetter(sorted[pokemonIDs[i] - 1].name);
-    const sprite = sorted[pokemonIDs[i] - 1].sprites.other?.['official-artwork'].front_default;
+  for (let i = 0; i < pokemonList.length; i++) {
+    const id = pokemonList[i].id;
+    const name = capitalizeFirstLetter(pokemonList[i].name);
+    const sprite = pokemonList[i].sprites.other?.['official-artwork'].front_default;
     result.push({ id: id, name: name, sprite: sprite });
   }
   return result;

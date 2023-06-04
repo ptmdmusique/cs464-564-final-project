@@ -125,10 +125,7 @@ export const getDoughnutAttributeData = (attributeList: DoughnutDataType[]) => {
 };
 
 //Get the IDs of all Pokemon with the clicked on shape
-export const sortDoughnutData = (index: number, list: DoughnutDataType[]) => {
-  const pokemonIDs: number[] = [];
-  list[index].pokemon_species.forEach((pokemon) => {
-    pokemonIDs.push(+pokemon.url.split(/\//)[6]);
+export const getPokemonIDs = (index: number, list: DoughnutDataType[]) =>
+  list[index].pokemon_species.map((pokemon) => {
+    return +pokemon.url.split(/\//)[6];
   });
-  return pokemonIDs;
-};

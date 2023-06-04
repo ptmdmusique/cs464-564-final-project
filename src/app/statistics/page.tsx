@@ -28,10 +28,10 @@ import {
   getShortest,
   getSlowest,
   getTallest,
-  sortDoughnutData,
   getHighestHP,
   getHighestAttack,
   getHighestDefense,
+  getPokemonIDs,
 } from '@/utils/pokemon-stat';
 import { Pokemon, PokemonColor, PokemonHabitat, PokemonShape } from 'pokenode-ts';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -46,12 +46,14 @@ export interface DoughnutData {
 
 const StatisticsPage = () => {
   const [pokemonList, setPokemonList] = useState<Pokemon[]>([]);
+  const [pokemonDoughnutList, setPokemonDoughnutList] = useState<Pokemon[]>([]);
   const [pokemonShapes, setPokemonShapes] = useState<PokemonShape[]>([]);
   const [pokemonColors, setPokemonColors] = useState<PokemonColor[]>([]);
   const [pokemonHabitats, setPokemonHabitats] = useState<PokemonHabitat[]>([]);
   const [currentChart, setCurrentChart] = useState<ChartType>(chartType['heaviest']);
   const [doughnutData, setDoughnutData] = useState<DoughnutData[]>([]);
   const [bodyType, setBodyType] = useState<string>('');
+  const [pokemonIDs, setPokemonIDs] = useState<number[]>([]);
   const [filterRegion, setFilterRegion] = useState<RegionToggle>(
     regionList.reduce<RegionToggle>((accumulator, current) => {
       accumulator[current] = false;
@@ -60,19 +62,12 @@ const StatisticsPage = () => {
   );
 
   useEffect(() => {
-    // const promises: Promise<Pokemon>[] = [];
-    // for (let i = 1; i <= MAX_POKEMON_ID; i++) {
-    //   promises.push(getPokemonById(i));
-    // }
-
-    // Promise.all(promises).then(setPokemonList);
-
-    //This works with 1010 pokemon without any loading issue except for the graph flickering.
+    const promises: Promise<Pokemon>[] = [];
     for (let i = 1; i <= MAX_POKEMON_ID; i++) {
-      getPokemonById(i).then((res) => {
-        setPokemonList((pokemonList) => [...pokemonList, res]);
-      });
+      promises.push(getPokemonById(i));
     }
+
+    Promise.all(promises).then(setPokemonList);
 
     for (let i = 1; i <= MAX_SHAPES; i++) {
       getPokemonShapes(i).then((res) => {
@@ -97,6 +92,19 @@ const StatisticsPage = () => {
     setDoughnutData([]);
   }, [currentChart]);
 
+  useEffect(() => {
+    setPokemonDoughnutList([]);
+    for (let i = 0; i < pokemonIDs.length; i++) {
+      getPokemonById(pokemonIDs[i]).then((res) => {
+        setPokemonDoughnutList((pokemonDoughnutList) => [...pokemonDoughnutList, res]);
+      });
+    }
+  }, [pokemonIDs]);
+
+  useEffect(() => {
+    setDoughnutData(getPokemonData(pokemonDoughnutList));
+  }, [pokemonDoughnutList]);
+
   //Update region switch state
   const handleSwitch = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { id, checked } = event.target;
@@ -104,23 +112,20 @@ const StatisticsPage = () => {
   };
 
   const handleDoughnutChartClick = (index: number) => {
-    let pokemonIDs: number[] = [];
     switch (currentChart.tag) {
       case 'shape':
         setBodyType(pokemonShapes[index].name);
-        pokemonIDs = sortDoughnutData(index, pokemonShapes);
+        setPokemonIDs(getPokemonIDs(index, pokemonShapes));
         break;
 
       case 'color':
-        pokemonIDs = sortDoughnutData(index, pokemonColors);
+        setPokemonIDs(getPokemonIDs(index, pokemonColors));
         break;
 
       case 'habitat':
-        pokemonIDs = sortDoughnutData(index, pokemonHabitats);
+        setPokemonIDs(getPokemonIDs(index, pokemonHabitats));
         break;
     }
-
-    setDoughnutData(getPokemonData(pokemonList, pokemonIDs));
   };
 
   //Update the current chart on display based on side menu click
