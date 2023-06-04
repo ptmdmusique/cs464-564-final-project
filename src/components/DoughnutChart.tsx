@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { getColors, getRandomColors } from '@/utils/functional';
+import { getColors } from '@/utils/functional';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, ChartOptions, ChartData } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
 
@@ -22,13 +22,7 @@ export const DoughnutChart = (
   { dataset, title, label, handleClick }: DoughnutChartProps,
   { data, options }: ChartProps
 ) => {
-  let colorScheme: {
-    backgroundColors: string[];
-    borderColors: string[];
-  };
-  label === 'Color'
-    ? (colorScheme = getColors(dataset.labels))
-    : (colorScheme = getRandomColors(dataset.labels.length));
+  const colorScheme = getColors(dataset.labels, label);
 
   data = {
     labels: dataset.labels,

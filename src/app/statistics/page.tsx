@@ -1,4 +1,3 @@
-
 'use client';
 import { BarChart } from '@/components/BarChart';
 import { DoughnutChart } from '@/components/DoughnutChart';
@@ -13,7 +12,6 @@ import { filterByRegion } from '@/utils/region';
 import { shortPokemonIdList } from '@/data/pokemon';
 import { getPokemonData } from '@/utils/pokemon';
 import {
-  MAX_POKEMON_ID,
   MAX_SHAPES,
   MAX_COLORS,
   MAX_HABITATS,
@@ -40,7 +38,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Col, Row } from 'react-bootstrap';
 import 'src/app/statistics/statistics.css';
 
-
 export interface DoughnutData {
   id: number;
   name: string;
@@ -61,16 +58,10 @@ const StatisticsPage = () => {
     regionList.reduce<RegionToggle>((accumulator, current) => {
       accumulator[current] = false;
       return accumulator;
-    }, {} as RegionToggle),
+    }, {} as RegionToggle)
   );
 
   useEffect(() => {
-    // Uncomment this if we're brave and not afraid of being IP-blocked...
-    // const promises: Promise<Pokemon>[] = [];
-    // for (let i = 1; i <= MAX_POKEMON_ID; i++) {
-    //   promises.push(getPokemonById(i));
-    // }
-    // Promise.all(promises).then(setPokemonList);
     Promise.all(shortPokemonIdList.map(getPokemonById)).then(setPokemonList);
 
     const shapePromises: Promise<PokemonShape>[] = [];
@@ -79,17 +70,17 @@ const StatisticsPage = () => {
     }
     Promise.all(shapePromises).then(setPokemonShapes);
 
+    const colorPromises: Promise<PokemonColor>[] = [];
     for (let i = 1; i <= MAX_COLORS; i++) {
-      getPokemonColors(i).then((res) => {
-        setPokemonColors((pokemonColors) => [...pokemonColors, res]);
-      });
+      colorPromises.push(getPokemonColors(i));
     }
+    Promise.all(colorPromises).then(setPokemonColors);
 
+    const habitatPromises: Promise<PokemonHabitat>[] = [];
     for (let i = 1; i <= MAX_HABITATS; i++) {
-      getPokemonHabitats(i).then((res) => {
-        setPokemonHabitats((pokemonHabitats) => [...pokemonHabitats, res]);
-      });
+      habitatPromises.push(getPokemonHabitats(i));
     }
+    Promise.all(habitatPromises).then(setPokemonHabitats);
   }, []);
 
   useEffect(() => {
@@ -98,11 +89,11 @@ const StatisticsPage = () => {
 
   useEffect(() => {
     setPokemonDoughnutList([]);
-    for (let i = 0; i < pokemonIDs.length; i++) {
-      getPokemonById(pokemonIDs[i]).then((res) => {
-        setPokemonDoughnutList((pokemonDoughnutList) => [...pokemonDoughnutList, res]);
-      });
+
+    async function fetchData() {
+      await Promise.all(pokemonIDs.map(getPokemonById)).then(setPokemonDoughnutList);
     }
+    fetchData();
   }, [pokemonIDs]);
 
   useEffect(() => {
@@ -193,7 +184,7 @@ const StatisticsPage = () => {
 
   //Render the correct chart based on menu Click
   const renderChartComponent = () => {
-    if (currentChart.type === "bar") {
+    if (currentChart.type === 'bar') {
       return (
         <>
           <BarChart
