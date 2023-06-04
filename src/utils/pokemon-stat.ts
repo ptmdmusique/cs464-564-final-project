@@ -1,26 +1,27 @@
 import { Pokemon, PokemonShape } from 'pokenode-ts';
 import { capitalizeFirstLetter } from './functional';
+import { DoughnutDataType } from '@/data/chart-type';
 
 //Next 2 methods are used to filter/sort data for the weight charts
 export const getHeaviest = (pokemonList: Pokemon[]) => {
   const sorted = pokemonList.sort((a, b) => (a.weight > b.weight ? -1 : 1)).slice(0, 10);
-  return getAttributeData(sorted, 'weight');
+  return getBarAttributeData(sorted, 'weight');
 };
 
 export const getLightest = (pokemonList: Pokemon[]) => {
   const sorted = pokemonList.sort((a, b) => (a.weight < b.weight ? -1 : 1)).slice(0, 10);
-  return getAttributeData(sorted, 'weight');
+  return getBarAttributeData(sorted, 'weight');
 };
 
 //Next 2 methods are used to filter/sort data for the height charts
 export const getTallest = (pokemonList: Pokemon[]) => {
   const sorted = pokemonList.sort((a, b) => (a.height > b.height ? -1 : 1)).slice(0, 10);
-  return getAttributeData(sorted, 'height');
+  return getBarAttributeData(sorted, 'height');
 };
 
 export const getShortest = (pokemonList: Pokemon[]) => {
   const sorted = pokemonList.sort((a, b) => (a.height < b.height ? -1 : 1)).slice(0, 10);
-  return getAttributeData(sorted, 'height');
+  return getBarAttributeData(sorted, 'height');
 };
 
 //Next 2 methods are used to filter/sort data for the speed charts
@@ -28,18 +29,18 @@ export const getFastest = (pokemonList: Pokemon[]) => {
   const sorted = pokemonList
     .sort((a, b) => (a.stats[5].base_stat > b.stats[5].base_stat ? -1 : 1))
     .slice(0, 10);
-  return getAttributeData(sorted, 'speed');
+  return getBarAttributeData(sorted, 'speed');
 };
 
 export const getSlowest = (pokemonList: Pokemon[]) => {
   const sorted = pokemonList
     .sort((a, b) => (a.stats[5].base_stat < b.stats[5].base_stat ? -1 : 1))
     .slice(0, 10);
-  return getAttributeData(sorted, 'speed');
+  return getBarAttributeData(sorted, 'speed');
 };
 
 //Extract the ids, stats, and labels for the sorted data
-const getAttributeData = (sorted: Pokemon[], attribute: 'height' | 'weight' | 'speed') => {
+const getBarAttributeData = (sorted: Pokemon[], attribute: 'height' | 'weight' | 'speed') => {
   const sortedData: number[] = [];
   const sortedLabels: string[] = [];
   const id: number[] = [];
@@ -75,15 +76,24 @@ const getAttributeData = (sorted: Pokemon[], attribute: 'height' | 'weight' | 's
 };
 
 //Filter/Sort Data for body shape chart
-export const getShape = (shapeList: PokemonShape[]) => {
+export const getDoughnutAttributeData = (attributeList: DoughnutDataType[]) => {
   let labels: string[] = [];
   const data: number[] = [];
   const id: number[] = [];
 
-  shapeList.forEach((shapeType) => {
-    labels.push(capitalizeFirstLetter(shapeType.name));
-    data.push(shapeType.pokemon_species.length);
-    id.push(shapeType.id);
+  attributeList.forEach((attribute) => {
+    labels.push(capitalizeFirstLetter(attribute.name));
+    data.push(attribute.pokemon_species.length);
+    id.push(attribute.id);
   });
   return { id: id, data: data, labels: labels };
+};
+
+//Get the IDs of all Pokemon with the clicked on shape
+export const sortDoughnutData = (index: number, list: DoughnutDataType[]) => {
+  const pokemonIDs: number[] = [];
+  list[index].pokemon_species.forEach((pokemon) => {
+    pokemonIDs.push(+pokemon.url.split(/\//)[6]);
+  });
+  return pokemonIDs;
 };

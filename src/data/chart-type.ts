@@ -1,3 +1,5 @@
+import { PokemonColor, PokemonHabitat, PokemonShape } from 'pokenode-ts';
+
 export type ChartType = (typeof chartType)[Tag];
 
 export type Tag =
@@ -7,11 +9,15 @@ export type Tag =
   | 'tallest'
   | 'fastest'
   | 'slowest'
-  | 'shape';
+  | 'shape'
+  | 'color'
+  | 'habitat';
 
 export type Type = 'bar' | 'doughnut';
 
 export type Units = 'lb' | 'ft' | 'pts' | 'none';
+
+export type DoughnutDataType = PokemonShape | PokemonColor | PokemonHabitat;
 
 export const chartType: Record<
   Tag,
@@ -45,6 +51,20 @@ export const chartType: Record<
     tag: 'shape',
     title: 'Pokemon by Body Shape',
     label: 'Body Shape',
+    units: 'none',
+    type: 'doughnut',
+  },
+  color: {
+    tag: 'color',
+    title: 'Pokemon by Color',
+    label: 'Color',
+    units: 'none',
+    type: 'doughnut',
+  },
+  habitat: {
+    tag: 'habitat',
+    title: 'Pokemon by Habitat',
+    label: 'Habitat',
     units: 'none',
     type: 'doughnut',
   },

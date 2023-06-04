@@ -16,7 +16,7 @@ export const PokemonTable = ({ data }: PokemonTableProps) => {
   if (data.length === 0) return null;
 
   return (
-    <Table striped bordered hover className="pokemon-table w-50 mx-auto">
+    <Table striped bordered hover className="pokemon-table w-50 mx-auto mt-5">
       <thead>
         <tr>
           <th>#</th>

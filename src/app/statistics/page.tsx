@@ -9,18 +9,28 @@ import { ToggleMenu } from '@/components/ToggleMenu';
 import { chartType, ChartType } from '@/data/chart-type';
 import { regionList, RegionToggle } from '@/data/region';
 import { filterByRegion } from '@/utils/region';
-import { getPokemonData } from '@/utils/pokemon';
-import { MAX_POKEMON_ID, MAX_SHAPES, getPokemonById, getPokemonShapes } from '@/utils/pokemon';
+import { getPokemonData, sortById } from '@/utils/pokemon';
+import {
+  MAX_POKEMON_ID,
+  MAX_SHAPES,
+  MAX_COLORS,
+  MAX_HABITATS,
+  getPokemonById,
+  getPokemonShapes,
+  getPokemonColors,
+  getPokemonHabitats,
+} from '@/utils/pokemon';
 import {
   getFastest,
   getHeaviest,
   getLightest,
-  getShape,
+  getDoughnutAttributeData,
   getShortest,
   getSlowest,
   getTallest,
+  sortDoughnutData,
 } from '@/utils/pokemon-stat';
-import { Pokemon, PokemonShape } from 'pokenode-ts';
+import { Pokemon, PokemonColor, PokemonHabitat, PokemonShape } from 'pokenode-ts';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Col, Row } from 'react-bootstrap';
 import 'src/app/statistics/statistics.css';
@@ -34,6 +44,8 @@ export interface DoughnutData {
 const StatisticsPage = () => {
   const [pokemonList, setPokemonList] = useState<Pokemon[]>([]);
   const [pokemonShapes, setPokemonShapes] = useState<PokemonShape[]>([]);
+  const [pokemonColors, setPokemonColors] = useState<PokemonColor[]>([]);
+  const [pokemonHabitats, setPokemonHabitats] = useState<PokemonHabitat[]>([]);
   const [currentChart, setCurrentChart] = useState<ChartType>(chartType['heaviest']);
   const [doughnutData, setDoughnutData] = useState<DoughnutData[]>([]);
   const [bodyType, setBodyType] = useState<string>('');
@@ -57,7 +69,23 @@ const StatisticsPage = () => {
         setPokemonShapes((pokemonShapes) => [...pokemonShapes, res]);
       });
     }
+
+    for (let i = 1; i <= MAX_COLORS; i++) {
+      getPokemonColors(i).then((res) => {
+        setPokemonColors((pokemonColors) => [...pokemonColors, res]);
+      });
+    }
+
+    for (let i = 1; i <= MAX_HABITATS; i++) {
+      getPokemonHabitats(i).then((res) => {
+        setPokemonHabitats((pokemonHabitats) => [...pokemonHabitats, res]);
+      });
+    }
   }, []);
+
+  useEffect(() => {
+    setDoughnutData([]);
+  }, [currentChart]);
 
   //Update region switch state
   const handleSwitch = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,14 +94,22 @@ const StatisticsPage = () => {
   };
 
   const handleDoughnutChartClick = (index: number) => {
-    setBodyType(pokemonShapes[index].name);
-
-    //Get the IDs of all Pokemon with the clicked on shape
-    const pokemonIDs: number[] = [];
-    pokemonShapes[index].pokemon_species.forEach((pokemon) => {
-      pokemonIDs.push(+pokemon.url.split(/\//)[6]);
-    });
-
+    let pokemonIDs: number[] = [];
+    switch (currentChart.tag) {
+      case 'shape': {
+        setBodyType(pokemonShapes[index].name);
+        pokemonIDs = sortDoughnutData(index, pokemonShapes);
+        break;
+      }
+      case 'color': {
+        pokemonIDs = sortDoughnutData(index, pokemonColors);
+        break;
+      }
+      case 'habitat': {
+        pokemonIDs = sortDoughnutData(index, pokemonHabitats);
+        break;
+      }
+    }
     setDoughnutData(getPokemonData(pokemonList, pokemonIDs));
   };
 
@@ -110,12 +146,20 @@ const StatisticsPage = () => {
         break;
       }
       case 'shape': {
-        data = getShape(pokemonShapes);
+        data = getDoughnutAttributeData(pokemonShapes);
+        break;
+      }
+      case 'color': {
+        data = getDoughnutAttributeData(pokemonColors);
+        break;
+      }
+      case 'habitat': {
+        data = getDoughnutAttributeData(pokemonHabitats);
         break;
       }
     }
     return data;
-  }, [currentChart.tag, pokemonList, pokemonShapes, filterRegion]);
+  }, [currentChart.tag, pokemonList, pokemonShapes, filterRegion, pokemonColors, pokemonHabitats]);
 
   //Render the correct chart based on menu Click
   const renderChartComponent = () => {
@@ -140,7 +184,7 @@ const StatisticsPage = () => {
           label={currentChart.label}
           handleClick={handleDoughnutChartClick}
         />
-        <BodyShape bodyType={bodyType} />
+        {currentChart.tag === 'shape' ? <BodyShape bodyType={bodyType} /> : <></>}
         <PokemonTable data={doughnutData} />
       </>
     );
