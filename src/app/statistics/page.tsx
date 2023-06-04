@@ -1,3 +1,4 @@
+
 'use client';
 import { BarChart } from '@/components/BarChart';
 import { DoughnutChart } from '@/components/DoughnutChart';
@@ -6,9 +7,10 @@ import { PageLayout } from '@/components/PageLayout';
 import { BodyShape, PokemonTable } from '@/components/PokemonTable';
 import { StatsMenu } from '@/components/StatsMenu';
 import { ToggleMenu } from '@/components/ToggleMenu';
-import { chartType, ChartType } from '@/data/chart-type';
-import { regionList, RegionToggle } from '@/data/region';
+import { ChartType, chartType } from '@/data/chart-type';
+import { RegionToggle, regionList } from '@/data/region';
 import { filterByRegion } from '@/utils/region';
+import { shortPokemonIdList } from '@/data/pokemon';
 import { getPokemonData } from '@/utils/pokemon';
 import {
   MAX_POKEMON_ID,
@@ -38,6 +40,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Col, Row } from 'react-bootstrap';
 import 'src/app/statistics/statistics.css';
 
+
 export interface DoughnutData {
   id: number;
   name: string;
@@ -58,22 +61,23 @@ const StatisticsPage = () => {
     regionList.reduce<RegionToggle>((accumulator, current) => {
       accumulator[current] = false;
       return accumulator;
-    }, {} as RegionToggle)
+    }, {} as RegionToggle),
   );
 
   useEffect(() => {
-    const promises: Promise<Pokemon>[] = [];
-    for (let i = 1; i <= MAX_POKEMON_ID; i++) {
-      promises.push(getPokemonById(i));
-    }
+    // Uncomment this if we're brave and not afraid of being IP-blocked...
+    // const promises: Promise<Pokemon>[] = [];
+    // for (let i = 1; i <= MAX_POKEMON_ID; i++) {
+    //   promises.push(getPokemonById(i));
+    // }
+    // Promise.all(promises).then(setPokemonList);
+    Promise.all(shortPokemonIdList.map(getPokemonById)).then(setPokemonList);
 
-    Promise.all(promises).then(setPokemonList);
-
+    const shapePromises: Promise<PokemonShape>[] = [];
     for (let i = 1; i <= MAX_SHAPES; i++) {
-      getPokemonShapes(i).then((res) => {
-        setPokemonShapes((pokemonShapes) => [...pokemonShapes, res]);
-      });
+      shapePromises.push(getPokemonShapes(i));
     }
+    Promise.all(shapePromises).then(setPokemonShapes);
 
     for (let i = 1; i <= MAX_COLORS; i++) {
       getPokemonColors(i).then((res) => {
@@ -189,7 +193,7 @@ const StatisticsPage = () => {
 
   //Render the correct chart based on menu Click
   const renderChartComponent = () => {
-    if (currentChart.type === 'bar') {
+    if (currentChart.type === "bar") {
       return (
         <>
           <BarChart
