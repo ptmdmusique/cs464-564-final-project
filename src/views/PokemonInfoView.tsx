@@ -6,6 +6,7 @@ import PokemonInfoCard from "@/components/PokemonInfoCard";
 import { useEffect, useState } from "react";
 import { Pokemon } from "pokenode-ts";
 import { capitalizeFirstLetter } from "@/utils/functional";
+import { PokemonType } from "@/utils/pokemon-type";
 
 export default function PokemonInfoView() {
     const { queryParams, setQueryParams } = useQueryParams<{
@@ -19,7 +20,7 @@ export default function PokemonInfoView() {
     );
 
     const [pokemon, setPokemon] = useState<Pokemon | null>(null);
-    const [stats, setStats] = useState(new Map<string, any>());
+    const [pokemonInfo, setPokemonInfo] = useState(new Map<string, any>());
     const [abilities, setAbilities] = useState(new Map<string, string>());
     const [types, setTypes] = useState<string[]>([]);
     const [games, setGames] = useState<string[]>([]);
@@ -57,30 +58,20 @@ export default function PokemonInfoView() {
           });
     }, [queryParams, pokemon, isLoading, pokemonId]);
 
-    const searchPokemon = (id: number) => {
-        setPokemonId(id);
-    }
-
     async function parsePokemon (pokemon: Pokemon) {
         if(pokemon == null) return;
 
-        const stats = new Map<string, any>();
-        stats.set('name', capitalizeFirstLetter(pokemon.name));
-        stats.set('id', pokemon.id);
-        stats.set("height", pokemon.height);
-        stats.set("weight", pokemon.weight);
-        stats.set("sprite", pokemon.sprites.front_default);
-        stats.set("species", pokemon.species.name);
+        const pokemonInfo = new Map<string, any>();
+        pokemonInfo.set('name', capitalizeFirstLetter(pokemon.name));
+        pokemonInfo.set('id', pokemon.id);
+        pokemonInfo.set("height", pokemon.height);
+        pokemonInfo.set("weight", pokemon.weight);
+        pokemonInfo.set("sprite", pokemon.sprites.front_default);
+        pokemonInfo.set("species", pokemon.species.name);
 
-        const types = [];
-        for(const type of pokemon.types){
-            types.push(type.type.name);
-        }
+        const types = pokemon.types.map(type => type.type.name);
 
-        const games = [];
-        for (const game of pokemon.game_indices) {
-            games.push(game.version.name);
-        }
+        const games = pokemon.game_indices.map(game => game.version.name);
 
         const abilities = new Map<string, string>();
         for (const abilityItem of pokemon.abilities) {
@@ -89,7 +80,7 @@ export default function PokemonInfoView() {
             try {
                 const response = await getAbility(name);
                 for (const effectItem of response.effect_entries) {
-                    if(effectItem.language.name == "en")
+                    if(effectItem.language.name === "en")
                         abilities.set(name, effectItem.effect);
                     else 
                         abilities.set(name, ""); 
@@ -99,7 +90,7 @@ export default function PokemonInfoView() {
             }
         }
 
-        setStats(stats);
+        setPokemonInfo(pokemonInfo);
         setAbilities(abilities);
         setTypes(types);
         setGames(games);
@@ -111,18 +102,18 @@ export default function PokemonInfoView() {
             <h1>Pokedex</h1>
             <PokemonSearchBar
                 onSelected={(_, id) => {
-                    searchPokemon(id);
+                    setPokemonId(id);
                 }}
                 battle={false}
-            ></PokemonSearchBar>
+            />
             <PokemonInfoCard
-                stats={stats}
+                stats={pokemonInfo}
                 abilities={abilities}
                 types={types}
                 games={games}
                 isLoading={isLoading}
                 pokemon={pokemon}
-            ></PokemonInfoCard>
+            />
         </div>
     )
 }

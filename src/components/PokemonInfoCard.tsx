@@ -10,8 +10,10 @@ import { Pokemon } from "pokenode-ts";
 import AccordionItem from "react-bootstrap/esm/AccordionItem";
 import { LoadingSpinner } from "./LoadingSpinner";
 
+const IMAGE_SIZE = 300;
+
 interface Props {
-    pokemon?: Pokemon | null;
+    pokemon: Pokemon | null;
     stats: Map<string, any>;
     types: string[];
     abilities: Map<string, string>;
@@ -20,25 +22,23 @@ interface Props {
 }
 
 export default function PokemonInfoCard ({
-    pokemon: _pokemon,
+    pokemon: pokemon,
     stats,
     types, 
     abilities,
     games,
     isLoading
-}: Props) {
-    const IMAGE_SIZE = 300;
-
+}: Props) {    
     return (
         <div>
-            {!_pokemon && !isLoading && (
+            {!pokemon && !isLoading && (
                 <h2 className="text-danger">Error loading pokemon....</h2>
             )}
-            {_pokemon && !isLoading ? (
+            {pokemon && !isLoading ? (
                 <>
                 <div>
                     <h2>{stats.get('name')}</h2> 
-                    <p className="">{stats.get('id')}</p>
+                    <p>{stats.get('id')}</p>
                 </div>
                 <Col>
                     <Image
@@ -50,10 +50,10 @@ export default function PokemonInfoCard ({
                         priority
                     />
                     <h3>Types:</h3>
-                    {types.map((item, index) => (
+                    {types.map((arrayItem, index) => (
                         <PokemonTypeTag
                         key={index}
-                        typeName={item as PokemonType}
+                        typeName={arrayItem as PokemonType}
                         className="me-2"
                         />
                     ))}
@@ -68,12 +68,12 @@ export default function PokemonInfoCard ({
                     <div className="stat">{stats.get('species')}</div>
 
                     <h3>Abilities:</h3>
-                    {Array.from(abilities.entries()).map(([key, value]) => (
-                        <Accordion key={key} defaultActiveKey={key}>
+                    {Array.from(abilities.entries()).map(([name, def]) => (
+                        <Accordion key={name} defaultActiveKey={name}>
                             <Accordion.Header>
-                                {key}
+                                {name}
                             </Accordion.Header>
-                            <Accordion.Body>{value}</Accordion.Body>
+                            <Accordion.Body>{def}</Accordion.Body>
                         </Accordion>
                     ))}
                 </Col>
@@ -86,7 +86,7 @@ export default function PokemonInfoCard ({
                     </ul>
                 </Col>
                 </>
-            ): (<LoadingSpinner></LoadingSpinner>)}
+            ): (<LoadingSpinner/>)}
             
         </div>
     )

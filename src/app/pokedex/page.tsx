@@ -10,7 +10,7 @@ const PokemonInfoView = dynamic(() => import("@/views/PokemonInfoView"), {
 export default function Pokedex() {
   return (
     <div>
-      <PokemonInfoView></PokemonInfoView>
+      <PokemonInfoView/>
     </div>
   );
 }

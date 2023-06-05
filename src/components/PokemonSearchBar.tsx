@@ -43,12 +43,6 @@ export const PokemonSearchBar = ({
     [allSpecies],
   );
 
-  let searchPlaceholder;
-  if (battle)
-    searchPlaceholder = "Choose a pokemon..."
-  else 
-    searchPlaceholder = "Search for a pokemon..."
-
   return (
     <Typeahead
       id={`pokemon-search-bar-${idRef.current.toString()}`}
@@ -63,7 +57,7 @@ export const PokemonSearchBar = ({
         }
       }}
       options={displayNameList}
-      placeholder={searchPlaceholder}
+      placeholder={battle ? "Choose a pokemon..." : "Search for a pokemon..."}
       selected={[capitalizeFirstLetter(searchParam)]}
       onInputChange={setSearchParam}
       renderInput={({
