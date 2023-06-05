@@ -1,34 +1,42 @@
-"use client";
-import { BarChart } from "@/components/BarChart";
-import { DoughnutChart } from "@/components/DoughnutChart";
-import { LoadingSpinner } from "@/components/LoadingSpinner";
-import { PageLayout } from "@/components/PageLayout";
-import { BodyShape, PokemonTable } from "@/components/PokemonTable";
-import { StatsMenu } from "@/components/StatsMenu";
-import { ToggleMenu } from "@/components/ToggleMenu";
-import { ChartType, chartType } from "@/data/chart-type";
-import { shortPokemonIdList } from "@/data/pokemon";
-import { RegionToggle, regionList } from "@/data/region";
+'use client';
+import { BarChart } from '@/components/BarChart';
+import { DoughnutChart } from '@/components/DoughnutChart';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
+import { PageLayout } from '@/components/PageLayout';
+import { BodyShape, PokemonTable } from '@/components/PokemonTable';
+import { StatsMenu } from '@/components/StatsMenu';
+import { ToggleMenu } from '@/components/ToggleMenu';
+import { ChartType, chartType } from '@/data/chart-type';
+import { RegionToggle, regionList } from '@/data/region';
+import { filterByRegion } from '@/utils/region';
+import { shortPokemonIdList } from '@/data/pokemon';
+import { getPokemonData } from '@/utils/pokemon';
 import {
   MAX_SHAPES,
+  MAX_COLORS,
+  MAX_HABITATS,
   getPokemonById,
-  getPokemonData,
   getPokemonShapes,
-} from "@/utils/pokemon";
+  getPokemonColors,
+  getPokemonHabitats,
+} from '@/utils/pokemon';
 import {
   getFastest,
   getHeaviest,
   getLightest,
-  getShape,
+  getDoughnutAttributeData,
   getShortest,
   getSlowest,
   getTallest,
-} from "@/utils/pokemon-stat";
-import { filterByRegion } from "@/utils/region";
-import { Pokemon, PokemonShape } from "pokenode-ts";
-import React, { useEffect, useMemo, useState } from "react";
-import { Col, Row } from "react-bootstrap";
-import "src/app/statistics/statistics.css";
+  getHighestHP,
+  getHighestAttack,
+  getHighestDefense,
+  getPokemonIDs,
+} from '@/utils/pokemon-stat';
+import { Pokemon, PokemonColor, PokemonHabitat, PokemonShape } from 'pokenode-ts';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Col, Row } from 'react-bootstrap';
+import 'src/app/statistics/statistics.css';
 
 export interface DoughnutData {
   id: number;
@@ -38,35 +46,59 @@ export interface DoughnutData {
 
 const StatisticsPage = () => {
   const [pokemonList, setPokemonList] = useState<Pokemon[]>([]);
+  const [pokemonDoughnutList, setPokemonDoughnutList] = useState<Pokemon[]>([]);
   const [pokemonShapes, setPokemonShapes] = useState<PokemonShape[]>([]);
-  const [currentChart, setCurrentChart] = useState<ChartType>(
-    chartType["heaviest"],
-  );
+  const [pokemonColors, setPokemonColors] = useState<PokemonColor[]>([]);
+  const [pokemonHabitats, setPokemonHabitats] = useState<PokemonHabitat[]>([]);
+  const [currentChart, setCurrentChart] = useState<ChartType>(chartType['heaviest']);
   const [doughnutData, setDoughnutData] = useState<DoughnutData[]>([]);
-  const [bodyType, setBodyType] = useState<string>("");
+  const [bodyType, setBodyType] = useState<string>('');
+  const [pokemonIDs, setPokemonIDs] = useState<number[]>([]);
   const [filterRegion, setFilterRegion] = useState<RegionToggle>(
     regionList.reduce<RegionToggle>((accumulator, current) => {
       accumulator[current] = false;
       return accumulator;
-    }, {} as RegionToggle),
+    }, {} as RegionToggle)
   );
 
   useEffect(() => {
-    // Uncomment this if we're brave and not afraid of being IP-blocked...
-    // const promises: Promise<Pokemon>[] = [];
-    // for (let i = 1; i <= MAX_POKEMON_ID; i++) {
-    //   promises.push(getPokemonById(i));
-    // }
-    // Promise.all(promises).then(setPokemonList);
     Promise.all(shortPokemonIdList.map(getPokemonById)).then(setPokemonList);
 
     const shapePromises: Promise<PokemonShape>[] = [];
     for (let i = 1; i <= MAX_SHAPES; i++) {
       shapePromises.push(getPokemonShapes(i));
     }
-
     Promise.all(shapePromises).then(setPokemonShapes);
+
+    const colorPromises: Promise<PokemonColor>[] = [];
+    for (let i = 1; i <= MAX_COLORS; i++) {
+      colorPromises.push(getPokemonColors(i));
+    }
+    Promise.all(colorPromises).then(setPokemonColors);
+
+    const habitatPromises: Promise<PokemonHabitat>[] = [];
+    for (let i = 1; i <= MAX_HABITATS; i++) {
+      habitatPromises.push(getPokemonHabitats(i));
+    }
+    Promise.all(habitatPromises).then(setPokemonHabitats);
   }, []);
+
+  useEffect(() => {
+    setDoughnutData([]);
+  }, [currentChart]);
+
+  useEffect(() => {
+    setPokemonDoughnutList([]);
+
+    async function fetchData() {
+      await Promise.all(pokemonIDs.map(getPokemonById)).then(setPokemonDoughnutList);
+    }
+    fetchData();
+  }, [pokemonIDs]);
+
+  useEffect(() => {
+    setDoughnutData(getPokemonData(pokemonDoughnutList));
+  }, [pokemonDoughnutList]);
 
   //Update region switch state
   const handleSwitch = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -75,15 +107,20 @@ const StatisticsPage = () => {
   };
 
   const handleDoughnutChartClick = (index: number) => {
-    setBodyType(pokemonShapes[index].name);
+    switch (currentChart.tag) {
+      case 'shape':
+        setBodyType(pokemonShapes[index].name);
+        setPokemonIDs(getPokemonIDs(index, pokemonShapes));
+        break;
 
-    //Get the IDs of all Pokemon with the clicked on shape
-    const pokemonIDs: number[] = [];
-    pokemonShapes[index].pokemon_species.forEach((pokemon) => {
-      pokemonIDs.push(+pokemon.url.split(/\//)[6]);
-    });
+      case 'color':
+        setPokemonIDs(getPokemonIDs(index, pokemonColors));
+        break;
 
-    setDoughnutData(getPokemonData(pokemonList, pokemonIDs));
+      case 'habitat':
+        setPokemonIDs(getPokemonIDs(index, pokemonHabitats));
+        break;
+    }
   };
 
   //Update the current chart on display based on side menu click
@@ -94,41 +131,60 @@ const StatisticsPage = () => {
   const chartData = useMemo(() => {
     let data = getHeaviest(filterByRegion(pokemonList, filterRegion));
     switch (currentChart.tag) {
-      case "heaviest": {
+      case 'heaviest':
         data = getHeaviest(filterByRegion(pokemonList, filterRegion));
         break;
-      }
-      case "lightest": {
+
+      case 'lightest':
         data = getLightest(filterByRegion(pokemonList, filterRegion));
         break;
-      }
-      case "tallest": {
+
+      case 'tallest':
         data = getTallest(filterByRegion(pokemonList, filterRegion));
         break;
-      }
-      case "shortest": {
+
+      case 'shortest':
         data = getShortest(filterByRegion(pokemonList, filterRegion));
         break;
-      }
-      case "fastest": {
+
+      case 'fastest':
         data = getFastest(filterByRegion(pokemonList, filterRegion));
         break;
-      }
-      case "slowest": {
+
+      case 'slowest':
         data = getSlowest(filterByRegion(pokemonList, filterRegion));
         break;
-      }
-      case "shape": {
-        data = getShape(pokemonShapes);
+
+      case 'hp':
+        data = getHighestHP(filterByRegion(pokemonList, filterRegion));
         break;
-      }
+
+      case 'attack':
+        data = getHighestAttack(filterByRegion(pokemonList, filterRegion));
+        break;
+
+      case 'defense':
+        data = getHighestDefense(filterByRegion(pokemonList, filterRegion));
+        break;
+
+      case 'shape':
+        data = getDoughnutAttributeData(pokemonShapes);
+        break;
+
+      case 'color':
+        data = getDoughnutAttributeData(pokemonColors);
+        break;
+
+      case 'habitat':
+        data = getDoughnutAttributeData(pokemonHabitats);
+        break;
     }
     return data;
-  }, [currentChart.tag, pokemonList, pokemonShapes, filterRegion]);
+  }, [currentChart.tag, pokemonList, pokemonShapes, filterRegion, pokemonColors, pokemonHabitats]);
 
   //Render the correct chart based on menu Click
   const renderChartComponent = () => {
-    if (currentChart.type === "bar") {
+    if (currentChart.type === 'bar') {
       return (
         <>
           <BarChart
@@ -149,7 +205,7 @@ const StatisticsPage = () => {
           label={currentChart.label}
           handleClick={handleDoughnutChartClick}
         />
-        <BodyShape bodyType={bodyType} />
+        {currentChart.tag === 'shape' && <BodyShape bodyType={bodyType} />}
         <PokemonTable data={doughnutData} />
       </>
     );

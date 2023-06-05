@@ -67,7 +67,7 @@ export const BarChart = (
     <>
       <h2 className="text-center">{title}</h2>
       <div>
-        <Bar options={options} data={data} />
+        <Bar options={options} data={data} aria-label="bar chart" />
       </div>
     </>
   );

@@ -15,7 +15,7 @@ export const StatsMenu = ({ handleClick }: StatsMenuProps) => {
   return (
     <aside>
       <Container>
-        <ListGroup>
+        <ListGroup as="ul">
           {Object.keys(chartType).map((chart, index) => (
             <ListGroup.Item as="li" key={index} className={selected === index ? 'active' : ''}>
               <Button

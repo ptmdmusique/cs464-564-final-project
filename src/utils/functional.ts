@@ -1,3 +1,5 @@
+import { ColorRGB, LabelColor, HabitatChartColors, ShapeChartColors } from '@/data/doughnut-colors';
+
 export const getRandomNumber = (min: number, max: number) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
@@ -7,15 +9,14 @@ export const getRandomArrayElement = <T>(array: T[]): T =>
   array[Math.floor(Math.random() * array.length)];
 
 //Used for doughnut charts to generate random colors for the cell background and borders
-export const getRandomColors = (numOfItems: number) => {
+export const getColors = (labels: string[], label: string) => {
+  if (label === 'Habitat') return HabitatChartColors;
+  if (label === 'Body Shape') return ShapeChartColors;
   let backgroundColors: string[] = [];
   let borderColors: string[] = [];
-  for (let i = 0; i < numOfItems; i++) {
-    const val1 = Math.random() * 255;
-    const val2 = Math.random() * 255;
-    const val3 = Math.random() * 255;
-    backgroundColors.push(`rgba(${val1}, ${val2}, ${val3}, 0.8)`);
-    borderColors.push(`rgba(${val1}, ${val2}, ${val3}, 1)`);
+  for (let i = 0; i < labels.length; i++) {
+    backgroundColors.push(`rgba(${ColorRGB[labels[i].toLowerCase() as LabelColor]}, 0.7)`);
+    borderColors.push(`rgba(${ColorRGB[labels[i].toLowerCase() as LabelColor]}, 0.9)`);
   }
   return { backgroundColors: backgroundColors, borderColors: borderColors };
 };

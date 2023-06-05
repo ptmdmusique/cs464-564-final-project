@@ -1,3 +1,5 @@
+import { PokemonColor, PokemonHabitat, PokemonShape } from 'pokenode-ts';
+
 export type ChartType = (typeof chartType)[Tag];
 
 export type Tag =
@@ -7,11 +9,18 @@ export type Tag =
   | 'tallest'
   | 'fastest'
   | 'slowest'
-  | 'shape';
+  | 'hp'
+  | 'attack'
+  | 'defense'
+  | 'shape'
+  | 'color'
+  | 'habitat';
 
 export type Type = 'bar' | 'doughnut';
 
 export type Units = 'lb' | 'ft' | 'pts' | 'none';
+
+export type DoughnutDataType = PokemonShape | PokemonColor | PokemonHabitat;
 
 export const chartType: Record<
   Tag,
@@ -41,10 +50,40 @@ export const chartType: Record<
   },
   fastest: { tag: 'fastest', title: 'Top 10 Fastest', label: 'Speed', units: 'pts', type: 'bar' },
   slowest: { tag: 'slowest', title: 'Top 10 Slowest', label: 'Speed', units: 'pts', type: 'bar' },
+  hp: { tag: 'hp', title: 'Top 10 Highest HP', label: 'HP', units: 'pts', type: 'bar' },
+  attack: {
+    tag: 'attack',
+    title: 'Top 10 Highest Attack',
+    label: 'Attack',
+    units: 'pts',
+    type: 'bar',
+  },
+  defense: {
+    tag: 'defense',
+    title: 'Top 10 Highest Defense',
+    label: 'Defense',
+    units: 'pts',
+    type: 'bar',
+  },
+
   shape: {
     tag: 'shape',
     title: 'Pokemon by Body Shape',
     label: 'Body Shape',
+    units: 'none',
+    type: 'doughnut',
+  },
+  color: {
+    tag: 'color',
+    title: 'Pokemon by Color',
+    label: 'Color',
+    units: 'none',
+    type: 'doughnut',
+  },
+  habitat: {
+    tag: 'habitat',
+    title: 'Pokemon by Habitat',
+    label: 'Habitat',
     units: 'none',
     type: 'doughnut',
   },
