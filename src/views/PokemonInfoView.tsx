@@ -6,7 +6,6 @@ import PokemonInfoCard from "@/components/PokemonInfoCard";
 import { useEffect, useState } from "react";
 import { Pokemon } from "pokenode-ts";
 import { capitalizeFirstLetter } from "@/utils/functional";
-import { PokemonType } from "@/utils/pokemon-type";
 
 export default function PokemonInfoView() {
     const { queryParams, setQueryParams } = useQueryParams<{
@@ -66,7 +65,7 @@ export default function PokemonInfoView() {
         pokemonInfo.set('id', pokemon.id);
         pokemonInfo.set("height", pokemon.height);
         pokemonInfo.set("weight", pokemon.weight);
-        pokemonInfo.set("sprite", pokemon.sprites.front_default);
+        pokemonInfo.set("sprite", pokemon.sprites.other?.["official-artwork"].front_default ?? pokemon.sprites.front_default);
         pokemonInfo.set("species", pokemon.species.name);
 
         const types = pokemon.types.map(type => type.type.name);
