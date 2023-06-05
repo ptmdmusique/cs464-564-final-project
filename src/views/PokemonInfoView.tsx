@@ -6,6 +6,7 @@ import PokemonInfoCard from "@/components/PokemonInfoCard";
 import { useEffect, useState } from "react";
 import { Pokemon } from "pokenode-ts";
 import { capitalizeFirstLetter } from "@/utils/functional";
+import { Col, Container, Row } from "react-bootstrap";
 
 export default function PokemonInfoView() {
     const { queryParams, setQueryParams } = useQueryParams<{
@@ -82,7 +83,7 @@ export default function PokemonInfoView() {
                     if(effectItem.language.name === "en")
                         abilities.set(name, effectItem.effect);
                     else 
-                        abilities.set(name, ""); 
+                        abilities.set(name, ":( I have no description"); 
                 }
             } catch (error) {
                 console.error("Error fetching ability:", error)
@@ -93,26 +94,32 @@ export default function PokemonInfoView() {
         setAbilities(abilities);
         setTypes(types);
         setGames(games);
-        
     }
 
     return(
-        <div>
-            <h1>Pokedex</h1>
-            <PokemonSearchBar
-                onSelected={(_, id) => {
-                    setPokemonId(id);
-                }}
-                battle={false}
-            />
+        <Container className="mt-3">
+            <Row>
+                <Col>
+                    <h1>Pokedex</h1>
+                </Col>
+                <Col>
+                    <PokemonSearchBar
+                        onSelected={(_, id) => {
+                            setPokemonId(id);
+                        }}
+                        battle={false}
+                    />
+                </Col>
+            </Row>
+        
             <PokemonInfoCard
-                stats={pokemonInfo}
+                pokemonInfo={pokemonInfo}
                 abilities={abilities}
                 types={types}
                 games={games}
                 isLoading={isLoading}
                 pokemon={pokemon}
             />
-        </div>
+        </Container>
     )
 }
