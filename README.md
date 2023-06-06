@@ -1,5 +1,16 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+## Dependencies 🕸️🕸️
+
+- Next JS
+- React TypeScript
+- [Bootstrap, React Bootstrap](https://react-bootstrap.github.io/) for styling
+- [react-bootstrap-typeahead - npm](https://www.npmjs.com/package/react-bootstrap-typeahead) for Pokemon search bar
+- [Pokenode-ts](https://pokenode-ts.vercel.app/) wrapper for API
+- [react-chartjs-2](https://react-chartjs-2.js.org/) for charts
+
+## Tutorials
+
 ## Getting Started
 
 First, run the development server:
