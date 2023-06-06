@@ -60,10 +60,15 @@ export default function PokemonInfoCard ({
                         <h3 className="mt-4">Stats:</h3>
                         <div className="mx-lg-3 mx-sm-2">
                             <h4 className="fs-5">HP:</h4>
+                            <div className="mx-2 ">{pokemonInfo.get('hp')}</div>
                             <h4 className="fs-5">Attack:</h4>
+                            <div className="mx-2 ">{pokemonInfo.get('attack')}</div>
                             <h4 className="fs-5">Special-Attack:</h4>
+                            <div className="mx-2 ">{pokemonInfo.get('special-attack')}</div>
                             <h4 className="fs-5">Defense:</h4>
+                            <div className="mx-2 ">{pokemonInfo.get('defense')}</div>
                             <h4 className="fs-5">Special-Defense:</h4>
+                            <div className="mx-2 ">{pokemonInfo.get('special-defense')}</div>
                         </div>
                     </Col>
                     <Col>

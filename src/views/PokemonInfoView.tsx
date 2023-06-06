@@ -68,6 +68,10 @@ export default function PokemonInfoView() {
         pokemonInfo.set("weight", pokemon.weight);
         pokemonInfo.set("sprite", pokemon.sprites.other?.["official-artwork"].front_default ?? pokemon.sprites.front_default);
         pokemonInfo.set("species", pokemon.species.name);
+        for(const item of pokemon.stats) {
+            pokemonInfo.set(item.stat.name, item.base_stat);
+        }
+
 
         const types = pokemon.types.map(type => type.type.name);
 
