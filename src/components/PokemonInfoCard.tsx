@@ -59,11 +59,11 @@ export default function PokemonInfoCard ({
 
                         <h3 className="mt-4">Stats:</h3>
                         <div className="mx-lg-3 mx-sm-2">
-                            <div className="fw-bold">HP:</div>
-                            <div className="fw-bold">Attack:</div>
-                            <div className="fw-bold">Special-Attack:</div>
-                            <div className="fw-bold">Defense:</div>
-                            <div className="fw-bold">Special-Defense:</div>
+                            <h4 className="fs-5">HP:</h4>
+                            <h4 className="fs-5">Attack:</h4>
+                            <h4 className="fs-5">Special-Attack:</h4>
+                            <h4 className="fs-5">Defense:</h4>
+                            <h4 className="fs-5">Special-Defense:</h4>
                         </div>
                     </Col>
                     <Col>
@@ -96,24 +96,23 @@ const PokemonCard = ({
             <Card.Body>
                 <Row>
                     <Col>
-                        <Card.Title>{pokemonInfo.get("name")} - {pokemonInfo.get('id')}</Card.Title>
+                        <Card.Title className="fs-2">{pokemonInfo.get("name")} - {pokemonInfo.get('id')}</Card.Title>
                         <Image
                             src={pokemonInfo.get('sprite')}
                             alt={pokemonInfo.get('name')}
                             width={IMAGE_SIZE}
                             height={IMAGE_SIZE}
-                            style={{ width: IMAGE_SIZE, height: IMAGE_SIZE }}
                             priority
                         />
                     </Col>
                     <Col className="mx-lg-5">
                         <h3 className="mt-4">Basic Info:</h3>
                         <div className="mx-lg-3 mx-sm-2">
-                            <div className="fw-bold">Height:</div>
-                            <div className="mx-2">{pokemonInfo.get('height')} dm</div>
-                            <div className="fw-bold">Weight:</div>
+                            <h4 className="fs-5">Height:</h4>
+                            <div className="mx-2 ">{pokemonInfo.get('height')} dm</div>
+                            <h4 className="fs-5">Weight:</h4>
                             <div className="mx-2">{pokemonInfo.get('weight')} hg</div>
-                            <div className="fw-bold">Species:</div>
+                            <h4 className="fs-5">Species:</h4>
                             <div className="mx-2">{pokemonInfo.get('species')}</div>
                         </div>
                     </Col>
@@ -129,7 +128,6 @@ const PokemonCard = ({
                     </Col>
                 </Row>
             </Card.Body>
-
         </Card>
     )
 }
