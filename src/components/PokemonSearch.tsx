@@ -1,6 +1,6 @@
 "use-client"
 import { Row, Col, Container, Button, Dropdown } from "react-bootstrap";
-import 'bootstrap/dist/css/bootstrap.min.css'; 
+import 'bootstrap/dist/css/bootstrap.min.css';
 import { useEffect, useState } from "react";
 import { MIN_POKEMON_ID, MAX_POKEMON_ID, getPokemonById, getPokemonTypes, getTypeByName, getPokemonByName, getPokemonAbilities, getAbility } from "@/utils/pokemon";
 import { capitalizeFirstLetter, getRandomNumber } from "@/utils/functional";
@@ -11,7 +11,7 @@ interface Props {
     numOfPokemon: number
 }
 
-export default function PokemonSearch ({
+export default function PokemonSearch({
     numOfPokemon
 }: Props) {
     const [pokemonIdArray, setPokemonIdArray] = useState<number[]>(getRandomIds(numOfPokemon));
@@ -21,7 +21,7 @@ export default function PokemonSearch ({
     const [dropdownOptions, setDropdownOptions] = useState<string[]>([]);
     const [pokemonNamesArray, setPokemonNamesArray] = useState<string[]>([]);
 
-    useEffect (() => {
+    useEffect(() => {
         async function getPokemonWithIds() {
             const getPokemonPromises = pokemonIdArray.map(async (id) => {
                 try {
@@ -37,10 +37,10 @@ export default function PokemonSearch ({
                     console.error("Error fetching pokemon with id ", id, ": ", error);
                 }
             })
-    
+
             await Promise.all(getPokemonPromises);
         }
-        
+
         getPokemonWithIds();
 
     }, [pokemonIdArray]);
@@ -57,7 +57,7 @@ export default function PokemonSearch ({
                         sprite: response.sprites.other?.["official-artwork"].front_default ?? response.sprites.front_default
                     };
                     setAllPokemon((prevPokemon) => [...prevPokemon, pokemonInfo]);
-                } 
+                }
                 catch (error) {
                     console.error("Error fetching pokemon with name, ", name, ": ", error);
                 }
@@ -80,7 +80,7 @@ export default function PokemonSearch ({
                     sprite: response.sprites.other?.["official-artwork"].front_default ?? response.sprites.front_default
                 };
                 setAllPokemon((prevPokemon) => [...prevPokemon, pokemonInfo]);
-            } 
+            }
             catch (error) {
                 console.error("Error fetching pokemon with name, ", name, ": ", error);
             }
@@ -91,13 +91,13 @@ export default function PokemonSearch ({
 
     // Get's all the pokemon by type, condenses them, and pulls out the names (for later api call)
     const getPokemonListByType = async (type: string | null) => {
-        if(type === null) return;
+        if (type === null) return;
         try {
             const response = await getTypeByName(type);
             const pokemonList = response.pokemon;
-            const num = Math.floor(pokemonList.length/5); // only take 1/5 of array
+            const num = Math.floor(pokemonList.length / 5); // only take 1/5 of array
             pokemonList.splice(num, pokemonList.length - num);
-            
+
             // fetch pokemon
             let names: string[] = [];
             pokemonList.map((pokemon) => {
@@ -112,14 +112,14 @@ export default function PokemonSearch ({
 
     // Get's all the pokemon by ability, condenses them, and pulls out the names (for later api call)
     const getPokemonListByAbility = async (ability: string | null) => {
-        if(ability === null) return;
+        if (ability === null) return;
         try {
             const response = await getAbility(ability);
             const pokemonList = response.pokemon;
 
             // condense the list if greater than 20
-            if(pokemonList.length > 20) {
-                const num = Math.floor(pokemonList.length/5); // only take 1/5 of array
+            if (pokemonList.length > 20) {
+                const num = Math.floor(pokemonList.length / 5); // only take 1/5 of array
                 pokemonList.splice(num, pokemonList.length - num);
             }
 
@@ -193,7 +193,7 @@ export default function PokemonSearch ({
     // Randomize new ids to generate new random pokemon
     const generateNewIds = () => {
         // clear current:
-        setPokemonIdArray([]); 
+        setPokemonIdArray([]);
         setAllPokemon([]);
 
         // Generate new ids. Pokemon will get updated in useEffect.
@@ -214,7 +214,7 @@ export default function PokemonSearch ({
 
     // based on the input from the first dropdown, generate the list for the second dropdown
     const generateFilteredPokemonList = async () => {
-        switch(selectedFilterCategory) {
+        switch (selectedFilterCategory) {
             case "Types":
                 await generatePokemonFromType();
                 break;
@@ -284,30 +284,30 @@ export default function PokemonSearch ({
             </Row>
             {numOfPokemon < 10 && (
                 <Row>
-                    <Button 
+                    <Button
                         className="btn-danger my-3"
-                        onClick={() => {generateNewIds();}}
+                        onClick={() => { generateNewIds(); }}
                     >Randomize</Button>
                 </Row>
             )}
         </Container>
-        
+
     );
 }
 
 const getRandomIds = (numOfIds: number) => {
     //using set to have unique numbers
-    let numberSet= new Set<number>(); 
+    let numberSet = new Set<number>();
     let i = 0;
-    
+
     while (i !== numOfIds) {
         numberSet.add(getRandomNumber(MIN_POKEMON_ID, MAX_POKEMON_ID));
-        
+
         // Check size in case one didn't get added, we will want to fetch another number.
-        if(numberSet.size-1 === i) 
+        if (numberSet.size - 1 === i)
             ++i;
     }
-  
+
     let numArray: number[] = Array.from(numberSet);
     return numArray;
 }

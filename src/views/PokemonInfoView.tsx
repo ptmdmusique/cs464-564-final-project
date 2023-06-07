@@ -13,7 +13,7 @@ import PokemonSearch from "@/components/PokemonSearch";
 export default function PokemonInfoView() {
     const { queryParams, setQueryParams } = useQueryParams<{
         pokemon: string;
-      }>();
+    }>();
 
     const [pokemonId, setPokemonId] = useState(
         parseInt(queryParams.pokemon ?? "")
@@ -29,15 +29,15 @@ export default function PokemonInfoView() {
         if (!queryChanged) {
             return;
         }
-        
-        setQueryParams({pokemon: pokemonId.toString()});
+
+        setQueryParams({ pokemon: pokemonId.toString() });
     }, [pokemonId, setQueryParams, queryParams]);
 
     //Load in Pokemon
     useEffect(() => {
 
         // No parameter passed in:
-        if(Number.isNaN(pokemonId)) return;
+        if (Number.isNaN(pokemonId)) return;
 
         const queryId = parseInt(queryParams?.pokemon ?? "");
         const idChanged = queryId !== pokemon?.id;
@@ -48,20 +48,20 @@ export default function PokemonInfoView() {
         setIsLoading(idChanged);
 
         getPokemonById(pokemonId)
-          .then(async (response) => {
-            setPokemon(response)
-            await parsePokemon(response);
-          })
-          .catch((err) => {
-            console.error(err);
-          })
-          .finally(() => {
-            setIsLoading(false);
-          });
+            .then(async (response) => {
+                setPokemon(response)
+                await parsePokemon(response);
+            })
+            .catch((err) => {
+                console.error(err);
+            })
+            .finally(() => {
+                setIsLoading(false);
+            });
     }, [queryParams, pokemon, isLoading, pokemonId]);
 
-    async function parsePokemon (pokemon: Pokemon) {
-        if(pokemon == null) return;
+    async function parsePokemon(pokemon: Pokemon) {
+        if (pokemon == null) return;
 
         const pokemonInfo: PokemonInfo = {
             name: capitalizeFirstLetter(pokemon.name),
@@ -81,7 +81,7 @@ export default function PokemonInfoView() {
         }
 
         // parse the stats:
-        for(const stat of pokemon.stats) {
+        for (const stat of pokemon.stats) {
             switch (stat.stat.name) {
                 case "hp":
                     pokemonInfo.hp = stat.base_stat;
@@ -114,13 +114,13 @@ export default function PokemonInfoView() {
                         definition: null
                     };
                     for (const effectItem of response.effect_entries) {
-                        if(effectItem.language.name === "en") {
+                        if (effectItem.language.name === "en") {
                             newAbility.definition = effectItem.effect
                         }
                     }
                     pokemonInfo.abilities.push(newAbility);
                 });
-                
+
             } catch (error) {
                 console.error("Error fetching ability:", error);
             }
@@ -135,7 +135,7 @@ export default function PokemonInfoView() {
         setPokemonId(NaN);
     }
 
-    return(
+    return (
         <Container className="mt-3">
             <Row>
                 <Col>
@@ -154,23 +154,23 @@ export default function PokemonInfoView() {
                 <PokemonSearch
                     numOfPokemon={15}
                 />
-            ) : 
-            <>
-            <PokemonInfoCard
-                pokemonInfo={pokemonInfo}
-                isLoading={isLoading}
-            />
-            <Row>
-                <Button
-                    onClick={resetId}
-                    className="btn btn-danger mb-3 p-1"
-                >
-                    Browse
-                </Button>
-            </Row> 
-            </>
+            ) :
+                <>
+                    <PokemonInfoCard
+                        pokemonInfo={pokemonInfo}
+                        isLoading={isLoading}
+                    />
+                    <Row>
+                        <Button
+                            onClick={resetId}
+                            className="btn btn-danger mb-3 p-1"
+                        >
+                            Browse
+                        </Button>
+                    </Row>
+                </>
             }
-            
+
         </Container>
     )
 }

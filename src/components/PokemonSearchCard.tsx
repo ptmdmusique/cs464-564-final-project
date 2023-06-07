@@ -1,7 +1,7 @@
 "use-client"
 import Image from "next/image";
 import { Card } from "react-bootstrap";
-import 'bootstrap/dist/css/bootstrap.min.css'; 
+import 'bootstrap/dist/css/bootstrap.min.css';
 import { PokemonCardInfo } from "@/data/pokemon-info";
 
 interface Props {
@@ -13,7 +13,7 @@ const IMAGE_SIZE = 150;
 export default function PokemonSearchCard({
     pokemonInfo
 }: Props) {
-    
+
 
     return (
         <Card className="shadow-sm text-center my-3">
@@ -27,7 +27,7 @@ export default function PokemonSearchCard({
                     className="my-3"
                 />
             </Card.Title>
-            
+
             <Card.Body className="fs-3 border text-nowrap">
                 {pokemonInfo.name} - {pokemonInfo.id}
             </Card.Body>
