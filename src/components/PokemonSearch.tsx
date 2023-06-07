@@ -28,7 +28,7 @@ export default function PokemonSearch({
             const getPokemonPromises = pokemonIdArray.map(async (id) => {
                 try {
                     const response = await getPokemonById(id);
-                    let pokemonInfo: PokemonCardInfo = {
+                    const pokemonInfo: PokemonCardInfo = {
                         name: capitalizeFirstLetter(response.name),
                         id: response.id,
                         sprite: response.sprites.other?.["official-artwork"].front_default ?? response.sprites.front_default
@@ -53,7 +53,7 @@ export default function PokemonSearch({
             const getPokemonPromises = pokemonNamesArray.map(async (name) => {
                 try {
                     const response = await getPokemonByName(name);
-                    let pokemonInfo: PokemonCardInfo = {
+                    const pokemonInfo: PokemonCardInfo = {
                         name: capitalizeFirstLetter(response.name),
                         id: response.id,
                         sprite: response.sprites.other?.["official-artwork"].front_default ?? response.sprites.front_default
@@ -76,7 +76,7 @@ export default function PokemonSearch({
         const getPokemonPromises = names.map(async (name) => {
             try {
                 const response = await getPokemonByName(name);
-                let pokemonInfo: PokemonCardInfo = {
+                const pokemonInfo: PokemonCardInfo = {
                     name: capitalizeFirstLetter(response.name),
                     id: response.id,
                     sprite: response.sprites.other?.["official-artwork"].front_default ?? response.sprites.front_default
@@ -101,9 +101,8 @@ export default function PokemonSearch({
             pokemonList.splice(num, pokemonList.length - num);
 
             // fetch pokemon
-            let names: string[] = [];
-            pokemonList.map((pokemon) => {
-                names.push(pokemon.pokemon.name);
+            let names = pokemonList.map((pokemon) => {
+                return pokemon.pokemon.name;
             })
             setPokemonNamesArray(names);
         }
@@ -126,9 +125,8 @@ export default function PokemonSearch({
             }
 
             // fetch pokemon
-            let names: string[] = [];
-            pokemonList.map((pokemon) => {
-                names.push(pokemon.pokemon.name);
+            let names = pokemonList.map((pokemon) => {
+                return pokemon.pokemon.name;
             })
             setPokemonNamesArray(names);
         }
@@ -142,8 +140,10 @@ export default function PokemonSearch({
         setAllPokemon([]); //clear pokemon
         setPokemonNamesArray([]); //and names :)
 
-        await getPokemonListByType(selectedFilterType);
-        await getPokemonInfoWithNames(pokemonNamesArray);
+        await Promise.all([
+            getPokemonListByType(selectedFilterType),
+            getPokemonInfoWithNames(pokemonNamesArray)
+        ]);
 
     }
 
@@ -153,43 +153,43 @@ export default function PokemonSearch({
         setAllPokemon([]); //clear pokemon
         setPokemonNamesArray([]); //and names :)
 
-        await getPokemonListByAbility(selectedFilterType);
-        await getPokemonInfoWithNames(pokemonNamesArray);
+        await Promise.all([
+            getPokemonListByAbility(selectedFilterType),
+            getPokemonInfoWithNames(pokemonNamesArray)
+        ]);
     }
 
     // Get list of types for dropdown
     const getTypes = async () => {
         const response = await getPokemonTypes();
-        let options: string[] = [];
-        response.results.map((type) => {
-            options.push(type.name);
+        let options = response.results.map((type) => {
+            return type.name;
         });
-        setDropdownOptions(options);
+        return options;
     }
 
     // Get list of abilities for dropdown
     const getAbilities = async () => {
         const response = await getPokemonAbilities();
-        let options: string[] = [];
-        response.results.map((ability) => {
-            options.push(ability.name);
+        let options = response.results.map((ability) => {
+            return ability.name;
         })
-        setDropdownOptions(options);
+        return options;
     }
 
     // Get options based on dropdown category input 
     const getDropdownOptions = async (selectedCategory: string) => {
+        let dropdownOptions: string[] = [];
         switch (selectedCategory) {
             case "Types":
-                await getTypes();
+                dropdownOptions = await getTypes();
                 break;
             case "Abilities":
-                await getAbilities();
-                break;
-            default:
-                setDropdownOptions([]);
+                dropdownOptions = await getAbilities();
                 break;
         }
+
+        setDropdownOptions(dropdownOptions);
     }
 
     // Randomize new ids to generate new random pokemon
@@ -312,7 +312,5 @@ const getRandomIds = (numOfIds: number) => {
         if (numberSet.size - 1 === i)
             ++i;
     }
-
-    let numArray: number[] = Array.from(numberSet);
-    return numArray;
+    return Array.from(numberSet);
 }

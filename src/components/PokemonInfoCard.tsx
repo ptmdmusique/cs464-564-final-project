@@ -96,7 +96,7 @@ const PokemonCard = ({
                     <Col>
                         <Card.Title className="fs-2">{pokemonInfo?.name} - {pokemonInfo?.id}</Card.Title>
                         <Image
-                            src={pokemonInfo?.sprite ?? "src/data/pikachu.jpg"}
+                            src={pokemonInfo?.sprite ?? "public/images/pikachu.jpg"}
                             alt={pokemonInfo?.name ?? "Error loading image"}
                             width={IMAGE_SIZE}
                             height={IMAGE_SIZE}

@@ -26,7 +26,7 @@ export default function PokemonSearchCard({
             <Card className="shadow-sm text-center">
                 <Card.Title>
                     <Image
-                        src={pokemonInfo.sprite ?? "src/data/pikachu.jpg"}
+                        src={pokemonInfo.sprite ?? "public/images/pikachu.jpg"}
                         alt={pokemonInfo.name ?? "Error loading image"}
                         width={IMAGE_SIZE}
                         height={IMAGE_SIZE}
