@@ -9,72 +9,62 @@ import { PokemonType } from "@/utils/pokemon-type";
 import { Pokemon } from "pokenode-ts";
 import AccordionItem from "react-bootstrap/esm/AccordionItem";
 import { LoadingSpinner } from "./LoadingSpinner";
+import { PokemonInfo } from "@/data/pokemon-info";
 
 const IMAGE_SIZE = 300;
 
 interface Props {
-    pokemon: Pokemon | null;
-    pokemonInfo: Map<string, any>;
-    types: string[];
-    abilities: Map<string, string>;
-    games: string[];
+    pokemonInfo: PokemonInfo | null
     isLoading: boolean;
 }
 
 export default function PokemonInfoCard ({
-    pokemon: pokemon,
     pokemonInfo,
-    types, 
-    abilities,
-    games,
     isLoading
 }: Props) {    
     return (
         <div>
-            {!pokemon && !isLoading && (
+            {!pokemonInfo && !isLoading && (
                 <h2 className="text-danger">Error loading pokemon....</h2>
             )}
-            {pokemon && !isLoading ? (
+            {pokemonInfo && !isLoading ? (
             <Container className="mt-2 mr-5">
                 <Row>
                     <PokemonCard
-                        pokemon={pokemon}
                         pokemonInfo={pokemonInfo}
-                        types={types}
-                        abilities={abilities}
-                        games = {games}
                         isLoading={isLoading}
                     />
                     <Col className="mx-lg-3">
-
                         <h3 className="mt-4">Abilities:</h3>
-                        {Array.from(abilities.entries()).map(([name, def]) => (
-                            <Accordion key={name} defaultActiveKey={name}>
-                                <Accordion.Header>
-                                    {name}
-                                </Accordion.Header>
-                                <Accordion.Body>{def}</Accordion.Body>
-                            </Accordion>
-                        ))}
+                        
+                        {pokemonInfo.abilities.map((ability, index) => {
+                            return (
+                                <Accordion key={ability.name} defaultActiveKey={ability.name}>
+                                    <Accordion.Header>
+                                        {ability.name}
+                                    </Accordion.Header>
+                                    {ability.definition && (<Accordion.Body>{ability.definition}</Accordion.Body>)}
+                                </Accordion>
+                        )})}
 
                         <h3 className="mt-4">Stats:</h3>
                         <div className="mx-lg-3 mx-sm-2">
                             <h4 className="fs-5">HP:</h4>
-                            <div className="mx-2 ">{pokemonInfo.get('hp')}</div>
+                            <div className="mx-2 ">{pokemonInfo.hp}</div>
                             <h4 className="fs-5">Attack:</h4>
-                            <div className="mx-2 ">{pokemonInfo.get('attack')}</div>
-                            <h4 className="fs-5">Special-Attack:</h4>
-                            <div className="mx-2 ">{pokemonInfo.get('special-attack')}</div>
+                            <div className="mx-2 ">{pokemonInfo.attack}</div>
+                            <h4 className="fs-5">Special Attack:</h4>
+                            <div className="mx-2 ">{pokemonInfo.specialAttack}</div>
                             <h4 className="fs-5">Defense:</h4>
-                            <div className="mx-2 ">{pokemonInfo.get('defense')}</div>
-                            <h4 className="fs-5">Special-Defense:</h4>
-                            <div className="mx-2 ">{pokemonInfo.get('special-defense')}</div>
+                            <div className="mx-2 ">{pokemonInfo.defense}</div>
+                            <h4 className="fs-5">Special Defense:</h4>
+                            <div className="mx-2 ">{pokemonInfo.specialDefense}</div>
                         </div>
                     </Col>
                     <Col>
                         <h3 className="mt-4">Games Appeared In:</h3>
                         <ul>
-                        {games.map((game, index) => (
+                        {pokemonInfo.gamesIn.map((game, index) => (
                             <li key={index}>{game}</li>
                         ))}  
                         </ul>
@@ -89,11 +79,7 @@ export default function PokemonInfoCard ({
 };
 
 const PokemonCard = ({
-    pokemon: pokemon,
     pokemonInfo,
-    types, 
-    abilities,
-    games,
     isLoading
 }: Props) => {
     return (
@@ -101,10 +87,10 @@ const PokemonCard = ({
             <Card.Body>
                 <Row>
                     <Col>
-                        <Card.Title className="fs-2">{pokemonInfo.get("name")} - {pokemonInfo.get('id')}</Card.Title>
+                        <Card.Title className="fs-2">{pokemonInfo?.name} - {pokemonInfo?.id}</Card.Title>
                         <Image
-                            src={pokemonInfo.get('sprite')}
-                            alt={pokemonInfo.get('name')}
+                            src={pokemonInfo?.sprite ?? "src/data/pikachu.jpg"}
+                            alt={pokemonInfo?.name ?? "Error loading image"}
                             width={IMAGE_SIZE}
                             height={IMAGE_SIZE}
                             priority
@@ -114,20 +100,20 @@ const PokemonCard = ({
                         <h3 className="mt-4">Basic Info:</h3>
                         <div className="mx-lg-3 mx-sm-2">
                             <h4 className="fs-5">Height:</h4>
-                            <div className="mx-2 ">{pokemonInfo.get('height')} dm</div>
+                            <div className="mx-2 ">{pokemonInfo?.height} dm</div>
                             <h4 className="fs-5">Weight:</h4>
-                            <div className="mx-2">{pokemonInfo.get('weight')} hg</div>
+                            <div className="mx-2">{pokemonInfo?.weight} hg</div>
                             <h4 className="fs-5">Species:</h4>
-                            <div className="mx-2">{pokemonInfo.get('species')}</div>
+                            <div className="mx-2">{pokemonInfo?.species}</div>
                         </div>
                     </Col>
                     <Col>
                         <h3 className="mb-3 mt-4">Types:</h3>
-                        {types.map((arrayItem, index) => (
+                        {pokemonInfo?.types.map((arrayItem, index) => (
                             <PokemonTypeTag
                             key={index}
                             typeName={arrayItem as PokemonType}
-                            className="w-25 text-center mx-1 d-inline"
+                            className="text-center mx-1 d-inline"
                             />
                         ))}
                     </Col>

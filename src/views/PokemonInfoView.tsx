@@ -5,8 +5,9 @@ import { PokemonSearchBar } from "@/components/PokemonSearchBar";
 import PokemonInfoCard from "@/components/PokemonInfoCard";
 import { useEffect, useState } from "react";
 import { Pokemon } from "pokenode-ts";
-import { capitalizeFirstLetter } from "@/utils/functional";
+import { capitalizeFirstLetter, removeHyphen } from "@/utils/functional";
 import { Col, Container, Row } from "react-bootstrap";
+import { PokemonInfo, Ability } from "@/data/pokemon-info";
 
 export default function PokemonInfoView() {
     const { queryParams, setQueryParams } = useQueryParams<{
@@ -16,14 +17,11 @@ export default function PokemonInfoView() {
     const [pokemonId, setPokemonId] = useState(
     queryParams.pokemon
         ? parseInt(queryParams.pokemon)
-        : getRandomPokemonId()
+        : 5
     );
 
     const [pokemon, setPokemon] = useState<Pokemon | null>(null);
-    const [pokemonInfo, setPokemonInfo] = useState(new Map<string, any>());
-    const [abilities, setAbilities] = useState(new Map<string, string>());
-    const [types, setTypes] = useState<string[]>([]);
-    const [games, setGames] = useState<string[]>([]);
+    const [pokemonInfo, setPokemonInfo] = useState<PokemonInfo | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     // Set Pokemon
@@ -45,6 +43,11 @@ export default function PokemonInfoView() {
         }
 
         setIsLoading(idChanged);
+        if (pokemonId === -1) {
+            console.log("ID is -1, is Loading = ", isLoading);
+            return;
+        }
+        
         getPokemonById(pokemonId)
           .then(async (response) => {
             setPokemon(response)
@@ -61,43 +64,72 @@ export default function PokemonInfoView() {
     async function parsePokemon (pokemon: Pokemon) {
         if(pokemon == null) return;
 
-        const pokemonInfo = new Map<string, any>();
-        pokemonInfo.set('name', capitalizeFirstLetter(pokemon.name));
-        pokemonInfo.set('id', pokemon.id);
-        pokemonInfo.set("height", pokemon.height);
-        pokemonInfo.set("weight", pokemon.weight);
-        pokemonInfo.set("sprite", pokemon.sprites.other?.["official-artwork"].front_default ?? pokemon.sprites.front_default);
-        pokemonInfo.set("species", pokemon.species.name);
-        for(const item of pokemon.stats) {
-            pokemonInfo.set(item.stat.name, item.base_stat);
+        const pokemonInfo: PokemonInfo = {
+            name: capitalizeFirstLetter(pokemon.name),
+            id: pokemon.id,
+            sprite: pokemon.sprites.other?.["official-artwork"].front_default ?? pokemon.sprites.front_default,
+            height: pokemon.height,
+            weight: pokemon.weight,
+            species: capitalizeFirstLetter(pokemon.species.name),
+            hp: 0,
+            attack: 0,
+            specialAttack: 0,
+            defense: 0,
+            specialDefense: 0,
+            abilities: [],
+            types: pokemon.types.map(type => type.type.name),
+            gamesIn: pokemon.game_indices.map(game => capitalizeFirstLetter(removeHyphen(game.version.name)))
         }
 
-
-        const types = pokemon.types.map(type => type.type.name);
-
-        const games = pokemon.game_indices.map(game => game.version.name);
-
-        const abilities = new Map<string, string>();
-        for (const abilityItem of pokemon.abilities) {
-            const name = abilityItem.ability.name;
-
-            try {
-                const response = await getAbility(name);
-                for (const effectItem of response.effect_entries) {
-                    if(effectItem.language.name === "en")
-                        abilities.set(name, effectItem.effect);
-                    else 
-                        abilities.set(name, ":( I have no description"); 
-                }
-            } catch (error) {
-                console.error("Error fetching ability:", error)
+        // parse the stats:
+        for(const stat of pokemon.stats) {
+            switch (stat.stat.name) {
+                case "hp":
+                    pokemonInfo.hp = stat.base_stat;
+                    break;
+                case "attack":
+                    pokemonInfo.attack = stat.base_stat;
+                    break;
+                case "special-attack":
+                    pokemonInfo.specialAttack = stat.base_stat;
+                    break;
+                case "defense":
+                    pokemonInfo.defense = stat.base_stat;
+                    break;
+                case "special-defense":
+                    pokemonInfo.specialDefense = stat.base_stat;
+                    break;
+                default:
+                    break;
             }
         }
 
+        // fetch the abilities and their definitions:
+        const abilityPromises = pokemon.abilities.map(async (ability) => {
+            const name = ability.ability.name;
+
+            try {
+                await getAbility(name).then((response) => {
+                    let newAbility: Ability = {
+                        name: capitalizeFirstLetter(removeHyphen(name)),
+                        definition: null
+                    };
+                    for (const effectItem of response.effect_entries) {
+                        if(effectItem.language.name === "en") {
+                            newAbility.definition = effectItem.effect
+                        }
+                    }
+                    pokemonInfo.abilities.push(newAbility);
+                });
+                
+            } catch (error) {
+                console.error("Error fetching ability:", error);
+            }
+        });
+
+        await Promise.all(abilityPromises);
+
         setPokemonInfo(pokemonInfo);
-        setAbilities(abilities);
-        setTypes(types);
-        setGames(games);
     }
 
     return(
@@ -118,11 +150,7 @@ export default function PokemonInfoView() {
         
             <PokemonInfoCard
                 pokemonInfo={pokemonInfo}
-                abilities={abilities}
-                types={types}
-                games={games}
                 isLoading={isLoading}
-                pokemon={pokemon}
             />
         </Container>
     )
