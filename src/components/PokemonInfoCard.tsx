@@ -68,6 +68,7 @@ export default function PokemonInfoCard ({
                     </Col>
                 </Row>
                 <Row>
+                    <h2 className="text-center mt-5">View other Pokemon:</h2>
                     <PokemonSearch
                         numOfPokemon={3}
                     />

@@ -35,6 +35,12 @@ export const getPokemonColors = (id: number) => pokemonClient.getPokemonColorByI
 
 export const getPokemonHabitats = (id: number) => pokemonClient.getPokemonHabitatById(id);
 
+export const getPokemonTypes = () => pokemonClient.listTypes();
+
+export const getTypeByName = (name: string) => pokemonClient.getTypeByName(name);
+
+export const getPokemonAbilities = () => pokemonClient.listAbilities();
+
 //Sort pokemon by id
 export const sortById = (pokemonList: Pokemon[]) => {
   return pokemonList.sort((a, b) => (a.id < b.id ? -1 : 1));
