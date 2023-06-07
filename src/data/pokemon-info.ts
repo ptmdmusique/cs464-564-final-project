@@ -21,3 +21,9 @@ export interface Ability {
     name: string;
     definition: string | null;
 }
+
+export interface PokemonCardInfo {
+    name: string;
+    id: number;
+    sprite: string | null;
+}

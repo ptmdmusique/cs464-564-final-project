@@ -5,9 +5,10 @@ import { PokemonSearchBar } from "@/components/PokemonSearchBar";
 import PokemonInfoCard from "@/components/PokemonInfoCard";
 import { useEffect, useState } from "react";
 import { Pokemon } from "pokenode-ts";
-import { capitalizeFirstLetter, getRandomNumber, removeHyphen } from "@/utils/functional";
-import { Col, Container, Row } from "react-bootstrap";
+import { capitalizeFirstLetter, removeHyphen } from "@/utils/functional";
+import { Button, Col, Container, Row } from "react-bootstrap";
 import { PokemonInfo, Ability } from "@/data/pokemon-info";
+import PokemonSearch from "@/components/PokemonSearch";
 
 export default function PokemonInfoView() {
     const { queryParams, setQueryParams } = useQueryParams<{
@@ -15,9 +16,7 @@ export default function PokemonInfoView() {
       }>();
 
     const [pokemonId, setPokemonId] = useState(
-    queryParams.pokemon
-        ? parseInt(queryParams.pokemon)
-        : getRandomPokemonId()
+        parseInt(queryParams.pokemon ?? "")
     );
 
     const [pokemon, setPokemon] = useState<Pokemon | null>(null);
@@ -36,6 +35,10 @@ export default function PokemonInfoView() {
 
     //Load in Pokemon
     useEffect(() => {
+
+        // No parameter passed in:
+        if(Number.isNaN(pokemonId)) return;
+
         const queryId = parseInt(queryParams?.pokemon ?? "");
         const idChanged = queryId !== pokemon?.id;
         if ((!idChanged) || isLoading) {
@@ -43,7 +46,7 @@ export default function PokemonInfoView() {
         }
 
         setIsLoading(idChanged);
-        
+
         getPokemonById(pokemonId)
           .then(async (response) => {
             setPokemon(response)
@@ -128,6 +131,10 @@ export default function PokemonInfoView() {
         setPokemonInfo(pokemonInfo);
     }
 
+    const resetId = () => {
+        setPokemonId(NaN);
+    }
+
     return(
         <Container className="mt-3">
             <Row>
@@ -143,11 +150,27 @@ export default function PokemonInfoView() {
                     />
                 </Col>
             </Row>
-        
+            {Number.isNaN(pokemonId) ? (
+                <PokemonSearch
+                    numOfPokemon={15}
+                />
+            ) : 
+            <>
             <PokemonInfoCard
                 pokemonInfo={pokemonInfo}
                 isLoading={isLoading}
             />
+            <Row>
+                <Button
+                    onClick={resetId}
+                    className="btn btn-danger mb-3 p-1"
+                >
+                    Browse
+                </Button>
+            </Row> 
+            </>
+            }
+            
         </Container>
     )
 }

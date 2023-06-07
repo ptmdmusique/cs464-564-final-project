@@ -3,7 +3,7 @@ import { DoughnutData } from '@/app/statistics/page';
 import { fromCache } from './cache.';
 import { capitalizeFirstLetter, getRandomNumber } from './functional';
 
-const MIN_POKEMON_ID = 1;
+export const MIN_POKEMON_ID = 1;
 export const MAX_POKEMON_ID = 100; // The max is 1010 but we should be nice to the API...
 export const MAX_SHAPES = 14;
 export const MAX_COLORS = 10;

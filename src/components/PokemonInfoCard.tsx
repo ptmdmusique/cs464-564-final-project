@@ -1,15 +1,12 @@
 "use-client"
-import { capitalizeFirstLetter } from "@/utils/functional";
-import { ReactNode  } from "react";
 import Image from "next/image";
-import { Accordion, Card, ListGroup, Row, Col, Container } from "react-bootstrap";
+import { Accordion, Card, Row, Col, Container } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css'; 
 import { PokemonTypeTag } from "./PokemonTypeTag";
 import { PokemonType } from "@/utils/pokemon-type";
-import { Pokemon } from "pokenode-ts";
-import AccordionItem from "react-bootstrap/esm/AccordionItem";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { PokemonInfo } from "@/data/pokemon-info";
+import PokemonSearch from "./PokemonSearch";
 
 const IMAGE_SIZE = 300;
 
@@ -69,7 +66,12 @@ export default function PokemonInfoCard ({
                         ))}  
                         </ul>
                     </Col>
-                </Row>      
+                </Row>
+                <Row>
+                    <PokemonSearch
+                        numOfPokemon={3}
+                    />
+                </Row>
             </Container>
             ): (<LoadingSpinner/>)}
             
