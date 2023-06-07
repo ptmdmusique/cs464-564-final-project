@@ -9,10 +9,12 @@ import PokemonSearchCard from "./PokemonSearchCard";
 
 interface Props {
     numOfPokemon: number
+    selectedPokemon: (id: number) => void
 }
 
 export default function PokemonSearch({
-    numOfPokemon
+    numOfPokemon,
+    selectedPokemon
 }: Props) {
     const [pokemonIdArray, setPokemonIdArray] = useState<number[]>(getRandomIds(numOfPokemon));
     const [allPokemon, setAllPokemon] = useState<PokemonCardInfo[]>([]);
@@ -277,6 +279,9 @@ export default function PokemonSearch({
                         <Col key={index}>
                             <PokemonSearchCard
                                 pokemonInfo={pokemon}
+                                selectedPokemon={(id) => {
+                                    selectedPokemon(id);
+                                }}
                             />
                         </Col>
                     )

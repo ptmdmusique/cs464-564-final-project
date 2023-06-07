@@ -11,13 +11,15 @@ import PokemonSearch from "./PokemonSearch";
 const IMAGE_SIZE = 300;
 
 interface Props {
-    pokemonInfo: PokemonInfo | null
+    pokemonInfo: PokemonInfo | null;
     isLoading: boolean;
+    selectedPokemon: (id: number) => void;
 }
 
 export default function PokemonInfoCard({
     pokemonInfo,
-    isLoading
+    isLoading,
+    selectedPokemon
 }: Props) {
     return (
         <div>
@@ -30,6 +32,7 @@ export default function PokemonInfoCard({
                         <PokemonCard
                             pokemonInfo={pokemonInfo}
                             isLoading={isLoading}
+                            selectedPokemon={(id) => selectedPokemon(id)}
                         />
                         <Col className="mx-lg-3">
                             <h3 className="mt-4">Abilities:</h3>
@@ -72,6 +75,7 @@ export default function PokemonInfoCard({
                         <h2 className="text-center mt-5">View other Pokemon:</h2>
                         <PokemonSearch
                             numOfPokemon={3}
+                            selectedPokemon={(id) => selectedPokemon(id)}
                         />
                     </Row>
                 </Container>
@@ -83,8 +87,7 @@ export default function PokemonInfoCard({
 };
 
 const PokemonCard = ({
-    pokemonInfo,
-    isLoading
+    pokemonInfo
 }: Props) => {
     return (
         <Card className="shadow-sm">

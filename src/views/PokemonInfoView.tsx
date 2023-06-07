@@ -135,6 +135,11 @@ export default function PokemonInfoView() {
         setPokemonId(NaN);
     }
 
+    const selectedNewPokemon = (id: number) => {
+        setPokemonId(id);
+        setPokemon(null);
+    }
+
     return (
         <Container className="mt-3">
             <Row>
@@ -153,12 +158,14 @@ export default function PokemonInfoView() {
             {Number.isNaN(pokemonId) ? (
                 <PokemonSearch
                     numOfPokemon={15}
+                    selectedPokemon={(id) => selectedNewPokemon(id)}
                 />
             ) :
                 <>
                     <PokemonInfoCard
                         pokemonInfo={pokemonInfo}
                         isLoading={isLoading}
+                        selectedPokemon={(id) => { selectedNewPokemon(id) }}
                     />
                     <Row>
                         <Button
