@@ -5,7 +5,7 @@ import { PokemonSearchBar } from "@/components/PokemonSearchBar";
 import PokemonInfoCard from "@/components/PokemonInfoCard";
 import { useEffect, useState } from "react";
 import { Pokemon } from "pokenode-ts";
-import { capitalizeFirstLetter, removeHyphen } from "@/utils/functional";
+import { capitalizeFirstLetter, getRandomNumber, removeHyphen } from "@/utils/functional";
 import { Col, Container, Row } from "react-bootstrap";
 import { PokemonInfo, Ability } from "@/data/pokemon-info";
 
@@ -17,7 +17,7 @@ export default function PokemonInfoView() {
     const [pokemonId, setPokemonId] = useState(
     queryParams.pokemon
         ? parseInt(queryParams.pokemon)
-        : 5
+        : getRandomPokemonId()
     );
 
     const [pokemon, setPokemon] = useState<Pokemon | null>(null);
@@ -37,16 +37,12 @@ export default function PokemonInfoView() {
     //Load in Pokemon
     useEffect(() => {
         const queryId = parseInt(queryParams?.pokemon ?? "");
-        const idChanged = queryId !== pokemonId;
+        const idChanged = queryId !== pokemon?.id;
         if ((!idChanged) || isLoading) {
             return;
         }
 
         setIsLoading(idChanged);
-        if (pokemonId === -1) {
-            console.log("ID is -1, is Loading = ", isLoading);
-            return;
-        }
         
         getPokemonById(pokemonId)
           .then(async (response) => {
