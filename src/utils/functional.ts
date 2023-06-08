@@ -20,3 +20,5 @@ export const getColors = (labels: string[], label: string) => {
   }
   return { backgroundColors: backgroundColors, borderColors: borderColors };
 };
+
+export const removeHyphen = (str: string) => str.replace("-", " ")

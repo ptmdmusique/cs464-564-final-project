@@ -244,6 +244,7 @@ const PokemonCard = ({
                       onIdChange(id);
                     }}
                     disabled={isLoading || isBattling}
+                    battle={true}
                   />
                 </Col>
 

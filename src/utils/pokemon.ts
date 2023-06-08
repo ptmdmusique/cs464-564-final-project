@@ -3,7 +3,7 @@ import { DoughnutData } from '@/app/statistics/page';
 import { fromCache } from './cache.';
 import { capitalizeFirstLetter, getRandomNumber } from './functional';
 
-const MIN_POKEMON_ID = 1;
+export const MIN_POKEMON_ID = 1;
 export const MAX_POKEMON_ID = 100; // The max is 1010 but we should be nice to the API...
 export const MAX_SHAPES = 14;
 export const MAX_COLORS = 10;
@@ -22,6 +22,8 @@ export const getRandomPokemon = () => getPokemonById(getRandomPokemonId());
 export const getMoveByName = (name: string) =>
   fromCache('move', () => moveClient.getMoveByName(name), name);
 
+export const getAbility = (name: string) => pokemonClient.getAbilityByName(name);
+
 export const getAllPokemonList = () => pokemonClient.listPokemonSpecies(0, MAX_POKEMON_ID);
 
 export const getPokemonByName = (name: string) =>
@@ -32,6 +34,12 @@ export const getPokemonShapes = (id: number) => pokemonClient.getPokemonShapeByI
 export const getPokemonColors = (id: number) => pokemonClient.getPokemonColorById(id);
 
 export const getPokemonHabitats = (id: number) => pokemonClient.getPokemonHabitatById(id);
+
+export const getPokemonTypes = () => pokemonClient.listTypes();
+
+export const getTypeByName = (name: string) => pokemonClient.getTypeByName(name);
+
+export const getPokemonAbilities = () => pokemonClient.listAbilities();
 
 //Sort pokemon by id
 export const sortById = (pokemonList: Pokemon[]) => {

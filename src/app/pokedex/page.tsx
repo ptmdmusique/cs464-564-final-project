@@ -1,5 +1,14 @@
-const PokedexPage = () => {
-  return <main>Pokedex Page</main>;
-};
+'use client';
+import React from 'react';
+import dynamic from "next/dynamic";
+const PokemonInfoView = dynamic(() => import("@/views/PokemonInfoView"), {
+  ssr: false,
+});
 
-export default PokedexPage;
+export default function Pokedex() {
+  return (
+    <div>
+      <PokemonInfoView />
+    </div>
+  );
+}
